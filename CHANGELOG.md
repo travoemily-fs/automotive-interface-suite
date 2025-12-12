@@ -12,5 +12,3 @@ instead of copying and pasting everything, i am choosing to type out each provid
 trying to focus so much on ensuring my coding style was identical to what was pre-written for us was increasing my sense of burnout and stress. after the brief break between the end of module 2 and the beginning of modules 3 + 4, i decided to go back to my roots for this last project and involve myself as much as possible. as a coder who has adhd, finding these little "tricks" that help me feel more confident and excited about developing is crucial and a process that i believe will continuously evolve as my skills and stylistic choices progress over time.
 
 <hr>
-
-#
