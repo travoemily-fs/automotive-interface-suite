@@ -92,3 +92,114 @@ declare module "socket.io" {
 new clients immediately have synched vehicle state info
 register client ➝ identifies client connection type
 */
+io.on("connection", (socket) => {
+  console.log("client connected:", socket.id);
+
+  // sends current state to newly establish client connection
+  socket.emit("vehicle-update", vehicleState);
+
+  // handles client type registration with connection-type guards
+  socket.on("register-client", (clientType: ClientType) => {
+    socket.clientType = clientType;
+    connectedClients[clientType]++;
+
+    console.log(
+      `${clientType} client connected. total: ${connectedClients[clientType]}`
+    );
+  });
+
+  // handles control inputs from mobile app with type safety
+  socket.on("control-input", (data: ControlInput) => {
+    const { type, value } = data;
+
+    // updates vehicle state based on input with type-safe operations
+    switch (type) {
+      case "throttle":
+        vehicleState.controls.throttle = Math.max(
+          0,
+          Math.min(1, value as number)
+        );
+        break;
+      case "brake":
+        vehicleState.controls.brake = Math.max(0, Math.min(1, value as number));
+        break;
+      case "steering":
+        vehicleState.controls.steering = Math.max(
+          -1,
+          Math.min(1, value as number)
+        );
+        break;
+      case "gear":
+        vehicleState.controls.gear = value as "P" | "R" | "N" | "D" | "S";
+        break;
+      case "lights":
+        vehicleState.systems.lights = value as boolean;
+        break;
+      case "leftSignal":
+        vehicleState.systems.leftSignal = value as boolean;
+        break;
+      case "rightSignal":
+        vehicleState.systems.rightSignal = value as boolean;
+        break;
+      case "hazards":
+        vehicleState.systems.hazards = value as boolean;
+        break;
+    }
+    vehicleState.timestamp = Date.now();
+
+    // broadcasts updated state to all clients
+    io.emit("vehicle-update", vehicleState);
+  });
+});
+
+// physics simulation that runs at 20 fps w/ type-safe operations
+setInterval(() => {
+  updateVehiclePhysics();
+  io.emit("vehicle-update", vehicleState);
+}, 50);
+
+function updateVehiclePhysics(): void {
+  const { controls, motion } = vehicleState;
+
+  // simple acceleration/deceleration model
+  if (controls.throttle > 0 && controls.gear === "D") {
+    motion.speed += controls.throttle * 0.5; // acceleration
+    motion.accelerating = true;
+  } else if (controls.brake > 0) {
+    motion.speed -= controls.brake * 1.0; // braking
+    motion.accelerating = false;
+  } else {
+    motion.speed *= 0.98; // natural deceleration
+    motion.accelerating = false;
+  }
+
+  // applying speed limits
+  motion.speed = Math.max(0, Math.min(120, motion.speed));
+
+  // updates rpm based on speed and gear
+  if (controls.gear === "D") {
+    vehicleState.cluster.rpm = Math.min(
+      6000,
+      motion.speed * 50 + controls.throttle * 1000
+    );
+  } else {
+    vehicleState.cluster.rpm *= 0.95; // rpm decay
+  }
+
+  // updates position based on speed and steering
+  if (motion.speed > 0) {
+    motion.direction += controls.steering * motion.speed * 0.1;
+    motion.direction = motion.direction % 360;
+
+    const radians = (motion.direction * Math.PI) / 180;
+    motion.x += Math.cos(radians) * motion.speed * 0.1;
+    motion.y += Math.sin(radians) * motion.speed * 0.1;
+  }
+}
+
+// starting the server
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`🚗 Vehicle Server running on port ${PORT}`);
+  console.log("Waiting for clients to connect...");
+});
