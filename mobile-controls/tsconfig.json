@@ -1,6 +1,22 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "module": "node16",
+    "moduleResolution": "node16",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "jsx": "react-native",
+    "lib": ["ES2019"],
+    "baseUrl": ".",
+    "paths": {
+      "@/": ["./src/"],
+      "@/types": ["../shared-types"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../shared-types"],
+  "exclude": ["node_modules"]
 }

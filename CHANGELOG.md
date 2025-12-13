@@ -13,8 +13,16 @@ trying to focus so much on ensuring my coding style was identical to what was pr
 
 ## daily work log
 
-<code>thursday, december 11th:</code> began development process by creating project folder.  completed steps 1-7 inside p.1 foundational architecture lesson
+<code>thursday, december 11th:</code> began development process by creating project folder. completed steps 1-7 inside p.1 foundational architecture lesson
 
 <code>friday, december 12th:</code> committed project to git after ensuring mobile-controls and tablet-cluster weren't being viewed as individual repositories. completed the entirety of p.1 foundational architecture with successful server connection and html test-client output.
 
-<code>saturday, december 13th:</code> tba
+<code>saturday, december 13th:</code> completed the entirety of p.2 phone interface with successful server and client side connections.
+
+<code>sunday, december 14th:</code> tba
+
+## issues encountered
+
+<blockquote>whenever i encountered an error within the lesson material, i will note it below!</blockquote>
+<br>
+<code>mobile-controls typescript configuration:</code> inside the <b>tsconfig.json</b> file settings, there is a missing compiler key/value pairing: <code>"module": "node16"</code>. further, the <code>"moduleResolution"</code> key should be updated to <code>"node16"</code> in order to properly compile typescript files.
