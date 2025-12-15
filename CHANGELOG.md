@@ -20,7 +20,9 @@ trying to focus so much on ensuring my coding style was identical to what was pr
 
 `sunday, december 14th:` completed lesson 3, tablet interface with successful server and client side connections on tablet and mobile interfaces. added throttling optimization to the useVehicleConnection hook inside mobile-controls and animation cleanup inside tablet-cluster for svg-heavy components speedometer, rpmgauge, and statusindicator files.
 
-`monday, december 15th:` tba
+`monday, december 15th:` completed parts 1 and 2 of p. 4 web interface lesson.
+
+`tuesday, december 16th:` completed parts 1 and 2 of p. 4 web interface lesson.
 
 ## errors within lessons
 
@@ -124,3 +126,24 @@ createAnimatedComponent(G);
 additionally, inside the `rpmGauge.tsx` component, precisely inside the **RPMGauge function**, the property `redLine` is missing from the original **RPMGaugeProps** type even though it _is_ present. this is because there is a type casing mix-match in the rpm component where it is used throughout as `redline`. change the casing to match the prop type and these errors go away. this error can also be found inside the **MainGauges.tsx** file.
 
 **_tablet-cluster warning panel component:_** there is another spelling issue where **systems** is used throughout despite the correct use being **system**. once the extra _s_ is removed, then the errors clear. this error is also present in the **StatusPanel.tsx** file.
+
+**_web-map hook usetrafficcontrols_** an error with the **date.now()** use. react does not allow impure functions during render so the functions containing that method had to be altered. the first fix was inside the **systemsmetrics** initial state, where i decided to use a stable placeholder. this was my updated block:
+
+```bash
+const [systemMetrics, setSystemMetrics] = useState<SystemMetrics>({
+  connectedDevices: { mobile: 0, tablet: 0, web: 0, test: 0 },
+  serverUptime: 0,
+  networkLatency: 0,
+  messagesPerSecond: 0,
+  lastUpdate: 0
+});
+```
+i also changed the **lastsecondref** declaration to use refs. the change was this, followed by initializing inside the effect once:
+
+```bash
+const lastSecondRef = useRef<number>(0);
+
+useEffect(() => {
+  lastSecondRef.current = Date.now();
+}, []);
+```
