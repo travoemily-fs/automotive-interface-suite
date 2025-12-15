@@ -1,13 +1,15 @@
 // import needed dependencies
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
-import { VehicleState, ControlInput } from "../../../shared-types";
-import { VehicleConnection } from "src/types";
+import { VehicleState } from "../../../shared-types";
+import { DashboardState } from "../types/dashboard";
 
 // uses my ip address
 const SERVER_URL = "http://10.0.0.52:3001";
 
-export function useVehicleConnection(): VehicleConnection {
+export function useDashboardConnection(): DashboardState & {
+  socket: Socket | null;
+} {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [vehicleState, setVehicleState] = useState<VehicleState>({
@@ -47,63 +49,47 @@ export function useVehicleConnection(): VehicleConnection {
     timestamp: Date.now(),
   });
 
-  const socketRef = useRef<Socket | null>(null);
-  const lastEmitRef = useRef<number>(0);
-
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
   useEffect(() => {
-    // init socket connection
+    console.log("Initializing dashboard connection...");
+
     const newSocket = io(SERVER_URL, {
       transports: ["websocket", "polling"],
     });
 
     newSocket.on("connect", () => {
-      console.log("connected to vehicle server!");
+      console.log("Dashboard connected to vehicle server");
       setConnected(true);
-      // registers as mobile client
-      newSocket.emit("register-client", "mobile");
+
+      // registers as tablet client
+      newSocket.emit("register-client", "tablet");
     });
 
     newSocket.on("disconnect", () => {
-      console.log("disconnected from vehicle server!");
+      console.log("Dashboard disconnected from vehicle server");
       setConnected(false);
     });
 
     newSocket.on("vehicle-update", (data: VehicleState) => {
       setVehicleState(data);
+      setLastUpdate(Date.now());
     });
 
     newSocket.on("connect_error", (error) => {
-      console.log("connection error:", error);
+      console.log("Dashboard connection error:", error);
       setConnected(false);
     });
 
     setSocket(newSocket);
-    socketRef.current = newSocket;
-
     return () => {
       newSocket.close();
     };
   }, []);
 
-  const sendControlInput = (type: string, value: string | number | boolean) => {
-    const now = Date.now();
-
-    if (now - lastEmitRef.current < 50) {
-      return;
-    }
-
-    lastEmitRef.current = now;
-
-    if (socketRef.current && connected) {
-      const controlInput: ControlInput = { type: type as any, value };
-      socketRef.current.emit("control-input", controlInput);
-    }
-  };
-
   return {
     socket,
-    connected,
     vehicleState,
-    sendControlInput,
+    connected,
+    lastUpdate,
   };
 }
