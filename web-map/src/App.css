@@ -1,42 +1,100 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.App {
+  text-align: left;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-header {
+  background: linear-gradient(90deg, #2a2a2a, #3a3a3a);
+  padding: 20px;
+  border-bottom: 3px solid #333;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app-header h1 {
+  margin: 0;
+  color: #00ff88;
+  font-size: 28px;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
+.header-info {
   color: #888;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2vw, 20px);
+  padding: clamp(10px, 2vw, 20px);
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: clamp(10px, 2vw, 20px);
+  height: calc(100vh - 200px); /* dynamic height based on viewport */
+  min-height: 500px;
+}
+
+.map-section {
+  overflow: hidden;
+}
+
+.control-section {
+  overflow-y: auto;
+}
+
+.admin-section {
+  margin-top: 20px;
+}
+
+.app-footer {
+  background-color: #2a2a2a;
+  border-top: 1px solid #333;
+  padding: 15px 20px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #888;
+  font-size: 12px;
+}
+
+/* fluid responsive design */
+@media (max-width: 900px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: clamp(8px, 1.5vw, 15px);
+  }
+
+  .control-section {
+    overflow-y: visible;
+  }
+
+  .app-header h1 {
+    font-size: clamp(20px, 4vw, 28px);
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+
+  .header-info {
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
 }
