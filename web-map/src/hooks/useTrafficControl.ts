@@ -13,7 +13,8 @@ import {
 const SERVER_URL = "http://10.0.0.52:3001";
 
 export function useTrafficControl() {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  //  socket moved from useState to useRef
+  const socketRef = useRef<Socket | null>(null);
 
   const [connected, setConnected] = useState(false);
 
@@ -24,10 +25,12 @@ export function useTrafficControl() {
     serverUptime: 0,
     networkLatency: 0,
     messagesPerSecond: 0,
-    lastUpdate: Date.now(),
+    // date.now() removed from render-time initialization
+    lastUpdate: 0,
   });
 
-  const [speedZones, setSpeedZones] = useState<SpeedZone[]>([
+  // removed setSpeedZones since it was never used
+  const [speedZones] = useState<SpeedZone[]>([
     {
       id: "zone-1",
       center: [-84.388, 33.749], // atlanta, ga coordinates
@@ -40,14 +43,21 @@ export function useTrafficControl() {
   const [alerts, setAlerts] = useState<TrafficAlert[]>([]);
   const latencyStartRef = useRef<number>(0);
   const messageCountRef = useRef<number>(0);
-  const lastSecondRef = useRef<number>(Date.now());
+  // date.now() removed from ref initializer
+  const lastSecondRef = useRef<number>(0);
 
   useEffect(() => {
     console.log("Initializing traffic control connection...");
 
+    // ref initialized inside effect instead of during render
+    lastSecondRef.current = Date.now();
+
     const newSocket = io(SERVER_URL, {
       transports: ["websocket", "polling"],
     });
+
+    // socket assigned to ref instead of setState
+    socketRef.current = newSocket;
 
     newSocket.on("connect", () => {
       console.log("Traffic control connected to server");
@@ -78,12 +88,14 @@ export function useTrafficControl() {
       const longitude = baseLongitude + normalizedX * mapWidth;
       const latitude = baseLatitude + normalizedY * mapHeight;
 
+      const now = Date.now();
+
       const newPosition: VehiclePosition = {
         id: vehicleId,
         coordinates: [longitude, latitude],
         bearing: data.motion.direction,
         speed: data.motion.speed,
-        lastUpdate: Date.now(),
+        lastUpdate: now,
       };
 
       setVehicles((prev) => ({
@@ -93,7 +105,6 @@ export function useTrafficControl() {
 
       // updates message counter for metrics
       messageCountRef.current++;
-      const now = Date.now();
       if (now - lastSecondRef.current >= 1000) {
         setSystemMetrics((prev) => ({
           ...prev,
@@ -126,7 +137,6 @@ export function useTrafficControl() {
       }));
     });
 
-    setSocket(newSocket);
     return () => {
       clearInterval(latencyInterval);
       newSocket.close();
@@ -135,29 +145,37 @@ export function useTrafficControl() {
 
   const updateEnvironment = useCallback(
     (update: EnvironmentUpdate) => {
-      if (socket && connected) {
-        socket.emit("environment-update", update);
+      // use socketRef instead of socket state
+      if (socketRef.current && connected) {
+        socketRef.current.emit("environment-update", update);
       }
     },
-    [socket, connected],
+    [connected],
   );
 
   const createAlert = useCallback(
     (alert: Omit<TrafficAlert, "id" | "timestamp">) => {
+      const now = Date.now();
+
       const newAlert: TrafficAlert = {
         ...alert,
-        id: `alert-${Date.now()}`,
-        timestamp: Date.now(),
+        id: `alert-${now}`,
+        timestamp: now,
       };
 
-      setAlerts((prev) => [...prev, newAlert]);
+      // functional state update to avoid stale alerts reference
+      setAlerts((prev) => {
+        const updated = [...prev, newAlert];
 
-      // sends to all connected clients
-      updateEnvironment({
-        alerts: [...alerts, newAlert].map((a) => a.message),
+        // sends to all connected clients
+        updateEnvironment({
+          alerts: updated.map((a) => a.message),
+        });
+
+        return updated;
       });
     },
-    [alerts, updateEnvironment],
+    [updateEnvironment],
   );
 
   const updateSpeedLimit = useCallback(
@@ -168,7 +186,6 @@ export function useTrafficControl() {
   );
 
   return {
-    socket,
     connected,
     vehicles: Object.values(vehicles),
     systemMetrics,
