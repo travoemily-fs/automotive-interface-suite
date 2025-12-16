@@ -37,10 +37,12 @@ function Speedometer({
   const needleRotation = useRef(new Animated.Value(-120)).current;
   const scaleValue = useRef(new Animated.Value(1)).current;
 
+  const displaySpeed = Math.abs(speed);
+
   useEffect(() => {
     // calculates target needle angle
     const gaugeCalc = calculateGaugePosition(
-      speed,
+      displaySpeed,
       0,
       maxSpeed,
       -120,
@@ -49,7 +51,7 @@ function Speedometer({
       CENTER_Y,
       NEEDLE_LENGTH,
       speedLimit * 0.9, // warning at 90% of speed limit
-      speedLimit // danger at speed limit
+      speedLimit, // danger at speed limit
     );
 
     // animates needle to new position
@@ -112,7 +114,7 @@ function Speedometer({
           y2={y2}
           stroke={value > speedLimit ? "#FF4444" : "#666"}
           strokeWidth={tickWidth}
-        />
+        />,
       );
 
       // adds numbers for major ticks
@@ -130,7 +132,7 @@ function Speedometer({
             fill={value > speedLimit ? "#FF4444" : "#888"}
             textAnchor="middle">
             {Math.round(value)}
-          </SvgText>
+          </SvgText>,
         );
       }
     }
@@ -176,7 +178,7 @@ function Speedometer({
             CENTER_Y,
             GAUGE_RADIUS - 5,
             -120,
-            -120 + (240 * speedLimit) / maxSpeed
+            -120 + (240 * speedLimit) / maxSpeed,
           )}
           stroke="#FFD700"
           strokeWidth="4"
@@ -191,7 +193,7 @@ function Speedometer({
             CENTER_Y,
             GAUGE_RADIUS - 5,
             -120 + (240 * speedLimit) / maxSpeed,
-            120
+            120,
           )}
           stroke="#FF4444"
           strokeWidth="4"
@@ -243,7 +245,7 @@ function Speedometer({
             styles.speedText,
             { color: speed > speedLimit ? "#FF4444" : color },
           ]}>
-          {formatSpeed(speed)}
+          {formatSpeed(displaySpeed)}
         </Text>
         <Text style={styles.unitText}>MPH</Text>
       </View>

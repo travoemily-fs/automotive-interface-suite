@@ -104,7 +104,7 @@ io.on("connection", (socket) => {
     connectedClients[clientType]++;
 
     console.log(
-      `${clientType} client connected. total: ${connectedClients[clientType]}`
+      `${clientType} client connected. total: ${connectedClients[clientType]}`,
     );
   });
 
@@ -117,7 +117,7 @@ io.on("connection", (socket) => {
       case "throttle":
         vehicleState.controls.throttle = Math.max(
           0,
-          Math.min(1, value as number)
+          Math.min(1, value as number),
         );
         break;
       case "brake":
@@ -126,7 +126,7 @@ io.on("connection", (socket) => {
       case "steering":
         vehicleState.controls.steering = Math.max(
           -1,
-          Math.min(1, value as number)
+          Math.min(1, value as number),
         );
         break;
       case "gear":
@@ -162,25 +162,31 @@ function updateVehiclePhysics(): void {
   const { controls, motion } = vehicleState;
 
   // simple acceleration/deceleration model
-  if (controls.throttle > 0 && controls.gear === "D") {
-    motion.speed += controls.throttle * 0.5; // acceleration
-    motion.accelerating = true;
+  if (controls.throttle > 0) {
+    if (controls.gear === "D") {
+      motion.speed += controls.throttle * 0.5;
+      motion.accelerating = true;
+    } else if (controls.gear === "R") {
+      motion.speed -= controls.throttle * 0.5;
+      motion.accelerating = true;
+    }
   } else if (controls.brake > 0) {
-    motion.speed -= controls.brake * 1.0; // braking
+    // brake always slows toward 0
+    motion.speed -= Math.sign(motion.speed) * controls.brake * 1.0;
     motion.accelerating = false;
   } else {
-    motion.speed *= 0.98; // natural deceleration
+    motion.speed *= 0.98;
     motion.accelerating = false;
   }
 
   // applying speed limits
-  motion.speed = Math.max(0, Math.min(120, motion.speed));
+  motion.speed = Math.max(-60, Math.min(120, motion.speed));
 
   // updates rpm based on speed and gear
-  if (controls.gear === "D") {
+  if (controls.gear === "D" || controls.gear === "R") {
     vehicleState.cluster.rpm = Math.min(
       6000,
-      motion.speed * 50 + controls.throttle * 1000
+      motion.speed * 50 + controls.throttle * 1000,
     );
   } else {
     vehicleState.cluster.rpm *= 0.95; // rpm decay

@@ -70,7 +70,7 @@ export default function App() {
 
         <View style={styles.speedDisplay}>
           <Text style={styles.speedText}>
-            {Math.round(vehicleState.motion?.speed || 0)}
+            {Math.round(Math.abs(vehicleState.motion?.speed || 0))}
           </Text>
           <Text style={styles.speedUnit}>MPH</Text>
         </View>
