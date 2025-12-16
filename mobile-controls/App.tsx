@@ -19,7 +19,7 @@ export default function App() {
     const lockOrientation = async () => {
       try {
         await ScreenOrientation.lockAsync(
-          ScreenOrientation.OrientationLock.LANDSCAPE
+          ScreenOrientation.OrientationLock.LANDSCAPE,
         );
         console.log("orientation locked to landscape");
       } catch (error) {
@@ -40,8 +40,11 @@ export default function App() {
 
   const handleThrottle = (value: number) => {
     sendControlInput("throttle", value);
-    // auto-shifts to drive when throttle is applied
-    if (value > 0 && vehicleState.controls?.gear! == "D") {
+
+    const currentGear = vehicleState.controls?.gear;
+
+    // auto-shift ONLY from Park or Neutral
+    if (value > 0 && (currentGear === "P" || currentGear === "N")) {
       sendControlInput("gear", "D");
     }
   };
