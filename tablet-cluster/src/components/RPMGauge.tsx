@@ -134,7 +134,9 @@ function RPMGauge({
           fontSize="10"
           fill={isRedline ? "#FF4444" : "#888"}
           textAnchor="middle">
+        
           {Math.round(value)}
+          
         </SvgText>
       );
     }
