@@ -43,7 +43,7 @@ export default function App() {
 
     const currentGear = vehicleState.controls?.gear;
 
-    // auto-shift ONLY from Park or Neutral
+    // auto-shift ONLY from park or neutral
     if (value > 0 && (currentGear === "P" || currentGear === "N")) {
       sendControlInput("gear", "D");
     }
