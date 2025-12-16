@@ -22,5 +22,5 @@ trying to focus so much on ensuring my coding style was identical to what was pr
 
 `monday, december 15th:` completed parts 1 and 2 of p. 4 web interface lesson.
 
-`tuesday, december 16th:` completed parts 1 and 2 of p. 4 web interface lesson.
+`tuesday, december 16th:` completed all of lesson 4, web interface along with video demonstrating successful mobile, web, tablet & server side functionality. have established what final project will be, requiring little change to current file structure to begin implementing new features.
 
