@@ -66,6 +66,14 @@ export function useTrafficControl() {
       newSocket.emit("register-client", "web");
     });
 
+    newSocket.on("connection-stats", (stats) => {
+      setSystemMetrics((prev) => ({
+        ...prev,
+        connectedDevices: stats,
+        lastUpdate: Date.now(),
+      }));
+    });
+
     newSocket.on("disconnect", () => {
       console.log("Traffic control disconnected from server");
       setConnected(false);

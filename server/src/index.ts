@@ -24,6 +24,15 @@ const io = new Server(server, {
   },
 });
 
+function emitConnectionStats() {
+  io.emit("connection-stats", {
+    mobile: connectedClients.mobile,
+    tablet: connectedClients.tablet,
+    web: connectedClients.web,
+    test: connectedClients.test,
+  });
+}
+
 /* 
 holds the initial vehicle state object in the following order: 
     1. motion
@@ -95,6 +104,8 @@ register client ➝ identifies client connection type
 io.on("connection", (socket) => {
   console.log("client connected:", socket.id);
 
+    emitConnectionStats(); 
+
   // sends current state to newly establish client connection
   socket.emit("vehicle-update", vehicleState);
 
@@ -106,6 +117,18 @@ io.on("connection", (socket) => {
     console.log(
       `${clientType} client connected. total: ${connectedClients[clientType]}`,
     );
+
+    emitConnectionStats();
+  });
+
+  // handles client disconnects
+  socket.on("disconnect", () => {
+    const type = socket.clientType;
+
+    if (type && connectedClients[type] > 0) {
+      connectedClients[type]--;
+      emitConnectionStats();
+    }
   });
 
   // handles control inputs from mobile app with type safety
