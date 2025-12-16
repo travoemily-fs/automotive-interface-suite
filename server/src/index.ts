@@ -195,7 +195,7 @@ function updateVehiclePhysics(): void {
   // updates position based on speed and steering
   if (motion.speed > 0) {
     motion.direction += controls.steering * motion.speed * 0.1;
-    motion.direction = motion.direction % 360;
+    motion.direction = (motion.direction + 360) % 360;
 
     const radians = (motion.direction * Math.PI) / 180;
     motion.x += Math.cos(radians) * motion.speed * 0.1;
