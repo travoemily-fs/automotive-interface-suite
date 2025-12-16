@@ -162,7 +162,11 @@ function updateVehiclePhysics(): void {
   const { controls, motion } = vehicleState;
 
   // simple acceleration/deceleration model
-  if (controls.throttle > 0) {
+  if (controls.brake > 0) {
+    // brake always overrides throttle
+    motion.speed -= Math.sign(motion.speed || 1) * controls.brake * 1.0;
+    motion.accelerating = false;
+  } else if (controls.throttle > 0) {
     if (controls.gear === "D") {
       motion.speed += controls.throttle * 0.5;
       motion.accelerating = true;
@@ -170,10 +174,6 @@ function updateVehiclePhysics(): void {
       motion.speed -= controls.throttle * 0.5;
       motion.accelerating = true;
     }
-  } else if (controls.brake > 0) {
-    // brake always slows toward 0
-    motion.speed -= Math.sign(motion.speed) * controls.brake * 1.0;
-    motion.accelerating = false;
   } else {
     motion.speed *= 0.98;
     motion.accelerating = false;
