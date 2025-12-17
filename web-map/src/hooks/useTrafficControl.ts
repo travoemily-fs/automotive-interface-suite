@@ -1,7 +1,7 @@
 // import needed dependencies
 import { useState, useEffect, useCallback, useRef } from "react";
 import io, { Socket } from "socket.io-client";
-import { VehicleState, EnvironmentUpdate } from "../../../shared-types";
+import { BatmobileState, EnvironmentUpdate } from "../../../shared-types";
 import {
   VehiclePosition,
   SystemMetrics,
@@ -79,7 +79,7 @@ export function useTrafficControl() {
       setConnected(false);
     });
 
-    newSocket.on("vehicle-update", (data: VehicleState) => {
+    newSocket.on("vehicle-update", (data: BatmobileState) => {
       // update vehicle position tracking
       const vehicleId = "vehicle-1"; // for now, we track one vehicle
 

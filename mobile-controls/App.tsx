@@ -12,7 +12,8 @@ import Controls from "./src/components/Controls";
 const { width, height } = Dimensions.get("window");
 
 export default function App() {
-  const { connected, vehicleState, sendControlInput } = useVehicleConnection();
+  const { connected, BatmobileState, sendControlCommand } =
+    useVehicleConnection();
 
   useEffect(() => {
     // locks screen orientation to landscape
@@ -35,17 +36,17 @@ export default function App() {
   }, []);
 
   const handleSteering = (value: number) => {
-    sendControlInput("steering", value);
+    sendControlCommand("steering", value);
   };
 
   const handleThrottle = (value: number) => {
-    sendControlInput("throttle", value);
+    sendControlCommand("throttle", value);
 
-    const currentGear = vehicleState.controls?.gear;
+    const currentGear = BatmobileState.controls?.gear;
 
     // auto-shift ONLY from park or neutral
     if (value > 0 && (currentGear === "P" || currentGear === "N")) {
-      sendControlInput("gear", "D");
+      sendControlCommand("gear", "D");
     }
   };
 
@@ -73,7 +74,7 @@ export default function App() {
 
         <View style={styles.speedDisplay}>
           <Text style={styles.speedText}>
-            {Math.round(Math.abs(vehicleState.motion?.speed || 0))}
+            {Math.round(Math.abs(BatmobileState.motion?.speed || 0))}
           </Text>
           <Text style={styles.speedUnit}>MPH</Text>
         </View>
@@ -91,14 +92,14 @@ export default function App() {
           <View style={styles.gearDisplay}>
             <Text style={styles.gearLabel}>GEAR</Text>
             <Text style={styles.gearValue}>
-              {vehicleState.controls?.gear || "P"}
+              {BatmobileState.controls?.gear || "P"}
             </Text>
           </View>
 
           <Controls
-            onControl={sendControlInput}
-            currentGear={vehicleState.controls?.gear}
-            systems={vehicleState.systems}
+            onControl={sendControlCommand}
+            currentGear={BatmobileState.controls?.gear}
+            systems={BatmobileState.systems}
           />
         </View>
 
@@ -106,7 +107,7 @@ export default function App() {
         <View style={styles.rightControls}>
           <View style={styles.pedalControls}>
             <GasPedal onThrottle={handleThrottle} />
-            <BrakeButton onBrake={sendControlInput} />
+            <BrakeButton onBrake={sendControlCommand} />
           </View>
         </View>
       </View>

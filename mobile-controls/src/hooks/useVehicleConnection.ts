@@ -1,7 +1,7 @@
 // import needed dependencies
 import { useState, useEffect, useRef } from "react";
 import io, { Socket } from "socket.io-client";
-import { VehicleState, ControlInput } from "../../../shared-types";
+import { BatmobileState, ControlCommand } from "../../../shared-types";
 import { VehicleConnection } from "src/types";
 
 // uses my ip address
@@ -10,7 +10,7 @@ const SERVER_URL = "http://10.0.0.52:3001";
 export function useVehicleConnection(): VehicleConnection {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [vehicleState, setVehicleState] = useState<VehicleState>({
+  const [BatmobileState, setBatmobileState] = useState<BatmobileState>({
     motion: {
       speed: 0,
       direction: 0,
@@ -68,8 +68,8 @@ export function useVehicleConnection(): VehicleConnection {
       setConnected(false);
     });
 
-    newSocket.on("vehicle-update", (data: VehicleState) => {
-      setVehicleState(data);
+    newSocket.on("vehicle-update", (data: BatmobileState) => {
+      setBatmobileState(data);
     });
 
     newSocket.on("connect_error", (error) => {
@@ -85,7 +85,10 @@ export function useVehicleConnection(): VehicleConnection {
     };
   }, []);
 
-  const sendControlInput = (type: string, value: string | number | boolean) => {
+  const sendControlCommand = (
+    type: string,
+    value: string | number | boolean,
+  ) => {
     const now = Date.now();
 
     if (now - lastEmitRef.current < 50) {
@@ -95,15 +98,15 @@ export function useVehicleConnection(): VehicleConnection {
     lastEmitRef.current = now;
 
     if (socketRef.current && connected) {
-      const controlInput: ControlInput = { type: type as any, value };
-      socketRef.current.emit("control-input", controlInput);
+      const ControlCommand: ControlCommand = { type: type as any, value };
+      socketRef.current.emit("control-input", ControlCommand);
     }
   };
 
   return {
     socket,
     connected,
-    vehicleState,
-    sendControlInput,
+    BatmobileState,
+    sendControlCommand,
   };
 }

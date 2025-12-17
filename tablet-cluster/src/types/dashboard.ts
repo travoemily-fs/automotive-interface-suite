@@ -1,5 +1,5 @@
 // import needed dependencies
-import { VehicleState } from "./../../../shared-types/index";
+import { BatmobileState } from "./../../../shared-types/index";
 
 // gauge config interfaces
 export interface GaugeProps {
@@ -92,8 +92,7 @@ export interface StatusPanelProps {
 
 // main dashboard state
 export interface DashboardState {
-  vehicleState: VehicleState;
+  BatmobileState: BatmobileState;
   connected: boolean;
   lastUpdate: number;
 }
-

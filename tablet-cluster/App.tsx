@@ -15,7 +15,7 @@ import StatusPanel from "./src/components/StatusPanel";
 const { width, height } = Dimensions.get("window");
 
 export default function App() {
-  const { vehicleState, connected, lastUpdate } = useDashboardConnection();
+  const { BatmobileState, connected, lastUpdate } = useDashboardConnection();
 
   return (
     <View style={styles.container}>
@@ -26,25 +26,25 @@ export default function App() {
       <DashboardHeader
         connected={connected}
         lastUpdate={lastUpdate}
-        gear={vehicleState.controls.gear}
-        speedLimit={vehicleState.environment.speedLimit}
+        gear={BatmobileState.controls.gear}
+        speedLimit={BatmobileState.environment.speedLimit}
       />
 
       {/* main gauge cluster */}
       <MainGauges
-        speed={vehicleState.motion.speed}
-        rpm={vehicleState.cluster.rpm}
-        accelerating={vehicleState.motion.accelerating}
+        speed={BatmobileState.motion.speed}
+        rpm={BatmobileState.cluster.rpm}
+        accelerating={BatmobileState.motion.accelerating}
       />
 
       {/* status indicators & trip computer */}
       <StatusPanel
-        fuel={vehicleState.cluster.fuel}
-        battery={vehicleState.cluster.battery}
-        warnings={vehicleState.cluster.warnings}
-        systems={vehicleState.systems}
-        trip={vehicleState.cluster.trip}
-        odometer={vehicleState.cluster.odometer}
+        fuel={BatmobileState.cluster.fuel}
+        battery={BatmobileState.cluster.battery}
+        warnings={BatmobileState.cluster.warnings}
+        systems={BatmobileState.systems}
+        trip={BatmobileState.cluster.trip}
+        odometer={BatmobileState.cluster.odometer}
       />
     </View>
   );

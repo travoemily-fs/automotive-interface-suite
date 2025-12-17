@@ -1,7 +1,7 @@
 // import needed dependencies
 import { useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
-import { VehicleState } from "../../../shared-types";
+import { BatmobileState } from "../../../shared-types";
 import { DashboardState } from "../types/dashboard";
 
 // uses my ip address
@@ -12,7 +12,7 @@ export function useDashboardConnection(): DashboardState & {
 } {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [vehicleState, setVehicleState] = useState<VehicleState>({
+  const [BatmobileState, setBatmobileState] = useState<BatmobileState>({
     motion: {
       speed: 0,
       direction: 0,
@@ -70,8 +70,8 @@ export function useDashboardConnection(): DashboardState & {
       setConnected(false);
     });
 
-    newSocket.on("vehicle-update", (data: VehicleState) => {
-      setVehicleState(data);
+    newSocket.on("vehicle-update", (data: BatmobileState) => {
+      setBatmobileState(data);
       setLastUpdate(Date.now());
     });
 
@@ -88,7 +88,7 @@ export function useDashboardConnection(): DashboardState & {
 
   return {
     socket,
-    vehicleState,
+    BatmobileState,
     connected,
     lastUpdate,
   };

@@ -4,9 +4,8 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import {
-  VehicleState,
-  ControlInput,
-  EnvironmentUpdate,
+  BatmobileState,
+  ControlCommand,
   ClientType,
 } from "./../../shared-types/index.js";
 
@@ -38,11 +37,11 @@ holds the initial vehicle state object in the following order:
     1. motion
     2. controls
     3. systems
-    4. cluster
+    4. cockpit
     5. environment
     6. timestamp
 */
-let vehicleState: VehicleState = {
+let batmobileState: BatmobileState = {
   motion: {
     speed: 0, // current speed in miles per hour
     direction: 0, // heading in degrees (0-359°)
@@ -50,19 +49,22 @@ let vehicleState: VehicleState = {
     y: 100, // refers to vertical position coordinate,
     accelerating: false,
   },
+
   controls: {
     throttle: 0, // 0-1 from idle to full throttle
     brake: 0, // 0-1 from no brake to full brake
     steering: 0, // -1 to 1 w/ -1 referring to full left & 1 referring to full right
     gear: "P", // possible values: P, R, N, D, S
   },
+
   systems: {
     lights: false,
     leftSignal: false,
     rightSignal: false,
     hazards: false,
   },
-  cluster: {
+
+  cockpit: {
     rpm: 0, // revolutions per minute, measures how fast engine's crankshaft spins & the number of times the crankshaft completes a full rotation in one
     fuel: 85, // as a percentage
     battery: 75, // as a percentage for electric vehicles only
@@ -70,11 +72,13 @@ let vehicleState: VehicleState = {
     trip: 0, // trip mileage ONLY
     odometer: 45234, // TOTAL mileage
   },
+
   environment: {
     speedLimit: 55,
     nearbyTraffic: [],
     alerts: [],
   },
+
   timestamp: Date.now(),
 };
 
@@ -104,10 +108,10 @@ register client ➝ identifies client connection type
 io.on("connection", (socket) => {
   console.log("client connected:", socket.id);
 
-    emitConnectionStats(); 
+  emitConnectionStats();
 
   // sends current state to newly establish client connection
-  socket.emit("vehicle-update", vehicleState);
+  socket.emit("vehicle-update", batmobileState);
 
   // handles client type registration with connection-type guards
   socket.on("register-client", (clientType: ClientType) => {
@@ -132,57 +136,60 @@ io.on("connection", (socket) => {
   });
 
   // handles control inputs from mobile app with type safety
-  socket.on("control-input", (data: ControlInput) => {
+  socket.on("control-input", (data: ControlCommand) => {
     const { type, value } = data;
 
     // updates vehicle state based on input with type-safe operations
     switch (type) {
       case "throttle":
-        vehicleState.controls.throttle = Math.max(
+        batmobileState.controls.throttle = Math.max(
           0,
           Math.min(1, value as number),
         );
         break;
       case "brake":
-        vehicleState.controls.brake = Math.max(0, Math.min(1, value as number));
+        batmobileState.controls.brake = Math.max(
+          0,
+          Math.min(1, value as number),
+        );
         break;
       case "steering":
-        vehicleState.controls.steering = Math.max(
+        batmobileState.controls.steering = Math.max(
           -1,
           Math.min(1, value as number),
         );
         break;
       case "gear":
-        vehicleState.controls.gear = value as "P" | "R" | "N" | "D" | "S";
+        batmobileState.controls.gear = value as "P" | "R" | "N" | "D" | "S";
         break;
       case "lights":
-        vehicleState.systems.lights = value as boolean;
+        batmobileState.systems.lights = value as boolean;
         break;
       case "leftSignal":
-        vehicleState.systems.leftSignal = value as boolean;
+        batmobileState.systems.leftSignal = value as boolean;
         break;
       case "rightSignal":
-        vehicleState.systems.rightSignal = value as boolean;
+        batmobileState.systems.rightSignal = value as boolean;
         break;
       case "hazards":
-        vehicleState.systems.hazards = value as boolean;
+        batmobileState.systems.hazards = value as boolean;
         break;
     }
-    vehicleState.timestamp = Date.now();
+    batmobileState.timestamp = Date.now();
 
     // broadcasts updated state to all clients
-    io.emit("vehicle-update", vehicleState);
+    io.emit("vehicle-update", batmobileState);
   });
 });
 
 // physics simulation that runs at 20 fps w/ type-safe operations
 setInterval(() => {
   updateVehiclePhysics();
-  io.emit("vehicle-update", vehicleState);
+  io.emit("vehicle-update", batmobileState);
 }, 50);
 
 function updateVehiclePhysics(): void {
-  const { controls, motion } = vehicleState;
+  const { controls, motion } = batmobileState;
 
   // simple acceleration/deceleration model
   if (controls.brake > 0) {
@@ -207,12 +214,12 @@ function updateVehiclePhysics(): void {
 
   // updates rpm based on speed and gear
   if (controls.gear === "D" || controls.gear === "R") {
-    vehicleState.cluster.rpm = Math.min(
+    batmobileState.cockpit.rpm = Math.min(
       6000,
       motion.speed * 50 + controls.throttle * 1000,
     );
   } else {
-    vehicleState.cluster.rpm *= 0.95; // rpm decay
+    batmobileState.cockpit.rpm *= 0.95; // rpm decay
   }
 
   // updates position based on speed and steering

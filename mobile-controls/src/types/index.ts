@@ -1,5 +1,9 @@
 // importing server types
-import { VehicleState, ControlInput, ClientType } from "../../../shared-types";
+import {
+  BatmobileState,
+  ControlCommand,
+  ClientType,
+} from "../../../shared-types";
 
 // steering slider props
 export interface SteeringSliderProps {
@@ -21,7 +25,7 @@ export interface BrakeButtonProps {
 
 // controls component props
 export interface ControlsProps {
-  onControl: (type: string, value: string | number| boolean) => void;
+  onControl: (type: string, value: string | number | boolean) => void;
   currentGear?: string;
   systems?: {
     lights: boolean;
@@ -35,13 +39,13 @@ export interface ControlsProps {
 export interface VehicleConnection {
   socket: any;
   connected: boolean;
-  vehicleState: VehicleState;
-  sendControlInput: (type: string, value: string | number | boolean) => void;
+  BatmobileState: BatmobileState;
+  sendControlCommand: (type: string, value: string | number | boolean) => void;
 }
 
 // application state interface
 export interface AppState {
   connected: boolean;
-  vehicleState: VehicleState;
+  BatmobileState: BatmobileState;
   connectionError?: string;
 }
