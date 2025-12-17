@@ -29,7 +29,7 @@ export default function ControlPanel({
 }: ControlPanelProps) {
   const [newAlert, setNewAlert] = useState({
     type: "construction" as TrafficAlert["type"],
-    coordinates: [-84.388, 33.749] as [number, number], // atlanta, ga
+    coordinates: [-74.006, 40.7128] as [number, number], // gotham (nyc)
     message: "",
     severity: "medium" as TrafficAlert["severity"],
     active: true,
@@ -54,8 +54,8 @@ export default function ControlPanel({
       ...newAlert,
       message: "",
       coordinates: [
-        -84.388 + (Math.random() - 0.5) * 0.02, // random location around atlanta
-        33.749 + (Math.random() - 0.5) * 0.02,
+        -74.006 + (Math.random() - 0.5) * 0.02, // random location around gotham
+        40.7128 + (Math.random() - 0.5) * 0.02,
       ] as [number, number],
     });
   };
@@ -86,7 +86,7 @@ export default function ControlPanel({
     if (newEmergencyMode) {
       onAlertCreate({
         type: "emergency",
-        coordinates: [-84.388, 33.749], // atlanta center
+        coordinates: [-74.006, 40.7128], // gotham center
         message:
           "EMERGENCY: All vehicles reduce speed and yield to emergency vehicles",
         severity: "high",
@@ -187,8 +187,8 @@ export default function ControlPanel({
             <div className="position-controls">
               <input
                 type="range"
-                min="-84.42"
-                max="-84.35"
+                min="-74.03"
+                max="-73.97"
                 step="0.001"
                 value={newAlert.coordinates[0]}
                 onChange={(e) =>
@@ -209,8 +209,8 @@ export default function ControlPanel({
 
               <input
                 type="range"
-                min="33.72"
-                max="33.78"
+                min="40.70"
+                max="40.75"
                 step="0.001"
                 value={newAlert.coordinates[1]}
                 onChange={(e) =>

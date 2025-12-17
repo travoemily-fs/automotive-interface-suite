@@ -33,7 +33,7 @@ export function useTrafficControl() {
   const [speedZones] = useState<SpeedZone[]>([
     {
       id: "zone-1",
-      center: [-84.388, 33.749], // atlanta, ga coordinates
+      center: [-74.006, 40.7128], // gotham (nyc) coordinates
       radius: 500, // 500 meters
       speedLimit: 55,
       active: true,
@@ -85,8 +85,8 @@ export function useTrafficControl() {
 
       // convert pixel coordinates to real gps coordinates (simulation)
       // in a real system, vehicles would report actual gps coordinates
-      const baseLatitude = 33.749; // atlanta, ga
-      const baseLongitude = -84.388;
+      const baseLatitude = 40.7128; // gotham (nyc)
+      const baseLongitude = -74.006;
 
       // define coordinate conversion with proper validation
       const mapWidth = 0.01; // ~1.1km at this latitude

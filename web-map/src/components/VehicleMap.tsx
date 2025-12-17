@@ -59,7 +59,7 @@ export default function VehicleMap({
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
           style: "mapbox://styles/mapbox/dark-v11", // dark theme for traffic control center
-          center: [-84.388, 33.749], // atlanta, ga
+          center: [-74.006, 40.7128], // gotham (nyc)
           zoom: 12,
           bearing: 0,
           pitch: 0,
