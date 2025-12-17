@@ -18,7 +18,7 @@ export function calculateGaugePosition(
   centerY: number = 0, // center y coordinate
   radius: number = 100, // needle length
   warningThreshold?: number,
-  dangerThreshold?: number
+  dangerThreshold?: number,
 ): GaugeCalculation {
   // clamps value to the min/max range
   const clampedValue = Math.max(min, Math.min(max, value));
@@ -57,7 +57,7 @@ export function generateGaugePath(
   radius: number,
   startAngle: number,
   endAngle: number,
-  strokeWidth: number = 10
+  strokeWidth: number = 10,
 ): string {
   const startRadians = (startAngle * Math.PI) / 180;
   const endRadians = (endAngle * Math.PI) / 180;
@@ -89,5 +89,6 @@ export function formatSpeed(speed: number): string {
 }
 
 export function formatRPM(rpm: number): string {
-  return (rpm / 1000).toFixed(1);
+  // problematic line, fixed by adding math rounding method and removing toFixed in exchange for to string. no more decimals in our display! 
+  return Math.round(rpm / 1000).toString();
 }

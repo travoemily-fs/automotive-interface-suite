@@ -34,7 +34,6 @@ function RPMGauge({
   redLine = 5000,
   color = "#00AAFF",
 }: RPMGaugeProps) {
-
   const needleRotation = useRef(new Animated.Value(-120)).current;
   const pulseAnimation = useRef(new Animated.Value(1)).current;
 
@@ -49,7 +48,7 @@ function RPMGauge({
       CENTER_Y,
       NEEDLE_LENGTH,
       redLine * 0.9, // warning zone
-      redLine // redline zone
+      redLine, // redline zone
     );
 
     Animated.timing(needleRotation, {
@@ -72,7 +71,7 @@ function RPMGauge({
             duration: 300,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       ).start();
     } else {
       pulseAnimation.stopAnimation();
@@ -118,7 +117,7 @@ function RPMGauge({
           y2={y2}
           stroke={isRedline ? "#FF4444" : "#666"}
           strokeWidth="2"
-        />
+        />,
       );
 
       // adds numbers
@@ -134,10 +133,9 @@ function RPMGauge({
           fontSize="10"
           fill={isRedline ? "#FF4444" : "#888"}
           textAnchor="middle">
-        
-          {Math.round(value)}
-          
-        </SvgText>
+          {/* problematic line fixed by simply multiplying the gauge value by 1000 to simulate a real rpm gauge */}
+          {Math.round(value * 1000)}
+        </SvgText>,
       );
     }
 
@@ -179,7 +177,7 @@ function RPMGauge({
             CENTER_Y,
             GAUGE_RADIUS - 3,
             -120,
-            -120 + (240 * (redLine * 0.9)) / maxRpm
+            -120 + (240 * (redLine * 0.9)) / maxRpm,
           )}
           stroke="#00AA44"
           strokeWidth="6"
@@ -194,7 +192,7 @@ function RPMGauge({
             CENTER_Y,
             GAUGE_RADIUS - 3,
             -120 + (240 * (redLine * 0.9)) / maxRpm,
-            -120 + (240 * redLine) / maxRpm
+            -120 + (240 * redLine) / maxRpm,
           )}
           stroke="#FFD700"
           strokeWidth="6"
@@ -209,7 +207,7 @@ function RPMGauge({
             CENTER_Y,
             GAUGE_RADIUS - 3,
             -120 + (240 * redLine) / maxRpm,
-            120
+            120,
           )}
           stroke="#FF4444"
           strokeWidth="6"
