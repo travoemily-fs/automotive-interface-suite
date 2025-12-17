@@ -24,3 +24,5 @@ trying to focus so much on ensuring my coding style was identical to what was pr
 
 `tuesday, december 16th:` completed all of lesson 4, web interface along with video demonstrating successful mobile, web, tablet & server side functionality. have established what final project will be, requiring little change to current file structure to begin implementing new features. also fixed the rest of the issues present in the debugging assignment; will add my annotations to my chosen error for filming later today. desktop interface issue is now fixed and shows all active device connections on dashboard page. completed all demo debugging video and successfully fixed all pre-existing bugs.
 
+`wednesday, december 16th:` officially began rewiring/renaming components and other project files to better fit the batmobile design.
+
