@@ -1,7 +1,7 @@
 // import needed dependencies
 import { useState, useEffect, useCallback, useRef } from "react";
 import io, { Socket } from "socket.io-client";
-import { BatmobileState, EnvironmentUpdate } from "../../../shared-types";
+import { BatmobileState, TacticalUpdate } from "../../../shared-types";
 import {
   VehiclePosition,
   SystemMetrics,
@@ -152,7 +152,7 @@ export function useTrafficControl() {
   }, []);
 
   const updateEnvironment = useCallback(
-    (update: EnvironmentUpdate) => {
+    (update: TacticalUpdate) => {
       // use socketRef instead of socket state
       if (socketRef.current && connected) {
         socketRef.current.emit("environment-update", update);

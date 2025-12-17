@@ -1,12 +1,13 @@
 // import needed dependencies
 import React, { useState } from "react";
 import "./ControlPanel.css";
-import { TrafficAlert, EnvironmentUpdate } from "../types/web";
+import { TrafficAlert } from "../types/web";
+import { BatmobileEnvironment } from "../../../shared-types";
 
 interface ControlPanelProps {
   onSpeedLimitChange: (limit: number) => void;
   onAlertCreate: (alert: Omit<TrafficAlert, "id" | "timestamp">) => void;
-  onEnvironmentUpdate: (update: EnvironmentUpdate) => void;
+  onEnvironmentUpdate: (update: Partial<BatmobileEnvironment>) => void;
   currentSpeedLimit: number;
   activeAlerts: TrafficAlert[];
 }
@@ -26,7 +27,6 @@ export default function ControlPanel({
   currentSpeedLimit,
   activeAlerts,
 }: ControlPanelProps) {
-
   const [newAlert, setNewAlert] = useState({
     type: "construction" as TrafficAlert["type"],
     coordinates: [-84.388, 33.749] as [number, number], // atlanta, ga
@@ -37,9 +37,9 @@ export default function ControlPanel({
 
   const [weatherCondition, setWeatherCondition] = useState<string>("clear");
   const [emergencyMode, setEmergencyMode] = useState(false);
+
   const handleSpeedLimitChange = (limit: number) => {
     onSpeedLimitChange(limit);
-    onEnvironmentUpdate({ speedLimit: limit });
   };
 
   const handleCreateAlert = () => {
@@ -265,7 +265,6 @@ export default function ControlPanel({
 
       {/* active alerts display */}
       <div className="control-section">
-
         <h4>Active Alerts ({activeAlerts.filter((a) => a.active).length})</h4>
 
         <div className="active-alerts">

@@ -1,18 +1,18 @@
 // import needed dependencies
-import { BatmobileState, EnvironmentUpdate } from "../../../shared-types";
+import { BatmobileEnvironment } from "../../../shared-types";
 
 // vehicle position on map
 export interface VehiclePosition {
   id: string;
-  coordinates: [number, number]; // in longitude, latitude format
-  bearing: number; // direction in degrees
+  coordinates: [number, number];
+  bearing: number;
   speed: number;
   lastUpdate: number;
 }
 
-// map configuration for mapbox
+// map configuration
 export interface MapConfig {
-  center: [number, number]; // in longitude, latitude format
+  center: [number, number];
   zoom: number;
   bearing: number;
   pitch: number;
@@ -22,8 +22,8 @@ export interface MapConfig {
 // traffic control interfaces
 export interface SpeedZone {
   id: string;
-  center: [number, number]; // in longitude, latitude format
-  radius: number; // in meters
+  center: [number, number];
+  radius: number;
   speedLimit: number;
   active: boolean;
 }
@@ -31,7 +31,7 @@ export interface SpeedZone {
 export interface TrafficAlert {
   id: string;
   type: "construction" | "accident" | "weather" | "emergency";
-  coordinates: [number, number]; // [longitude, latitude]
+  coordinates: [number, number];
   message: string;
   severity: "low" | "medium" | "high";
   timestamp: number;
@@ -56,25 +56,24 @@ export interface SystemMetrics {
 export interface ControlPanelProps {
   onSpeedLimitChange: (limit: number) => void;
   onAlertCreate: (alert: Omit<TrafficAlert, "id" | "timestamp">) => void;
-  onEnvironmentUpdate: (update: EnvironmentUpdate) => void;
+  onEnvironmentUpdate: (update: BatmobileEnvironment) => void;
   currentSpeedLimit: number;
   activeAlerts: TrafficAlert[];
 }
 
-// maps component props
+// map component props
 export interface MapComponentProps {
   vehicles: VehiclePosition[];
   speedZones: SpeedZone[];
   alerts: TrafficAlert[];
   config: MapConfig;
-  onMapClick: (x: number, y: number) => void;
+  onMapClick: (lng: number, lat: number) => void;
 }
 
 // admin dashboard props
 export interface AdminDashboardProps {
   metrics: SystemMetrics;
-  BatmobileStates: Record<string, BatmobileState>;
   connectionStatus: boolean;
 }
 
-export { EnvironmentUpdate };
+export type { BatmobileEnvironment };

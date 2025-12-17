@@ -28,7 +28,7 @@ function App() {
     <div className="App">
 
       <header className="app-header">
-        <h1>🚦 Automotive Traffic Control Center</h1>
+        <h1>Traffic Control Center</h1>
         <div className="header-info">
           <span>Real-time Vehicle Monitoring & Management System</span>
         </div>
