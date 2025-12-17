@@ -25,7 +25,7 @@ export default function SteeringSlider({
   onSteer,
   disabled = false,
 }: SteeringSliderProps) {
-  const [knobPosition, setKnobPosition] = useState(SLIDER_WIDTH / 2);  // start at center
+  const [knobPosition, setKnobPosition] = useState(SLIDER_WIDTH / 2); // start at center
   const [isDragging, setIsDragging] = useState(false);
   const animatedPosition = useRef(new Animated.Value(SLIDER_WIDTH / 2)).current;
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -112,7 +112,7 @@ export default function SteeringSlider({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>STEERING</Text>
+      <Text style={styles.label}>DIRECTIONAL CONTROL</Text>
 
       <View style={styles.sliderContainer} {...panResponder.panHandlers}>
         <Svg width={SLIDER_WIDTH} height={SLIDER_HEIGHT} style={styles.svg}>
@@ -200,33 +200,33 @@ export default function SteeringSlider({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
 
   label: {
-    color: '#888',
+    color: "#888",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
 
   sliderContainer: {
     width: SLIDER_WIDTH,
     height: SLIDER_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   svg: {
-    position: 'absolute',
+    position: "absolute",
   },
 
   instruction: {
-    color: '#666',
+    color: "#666",
     fontSize: 10,
     marginTop: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

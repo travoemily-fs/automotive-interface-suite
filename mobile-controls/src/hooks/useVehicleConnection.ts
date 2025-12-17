@@ -10,7 +10,7 @@ const SERVER_URL = "http://10.0.0.52:3001";
 export function useVehicleConnection(): VehicleConnection {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [BatmobileState, setBatmobileState] = useState<BatmobileState>({
+  const [batmobileState, setBatmobileState] = useState<BatmobileState>({
     motion: {
       speed: 0,
       direction: 0,
@@ -30,7 +30,7 @@ export function useVehicleConnection(): VehicleConnection {
       rightSignal: false,
       hazards: false,
     },
-    cluster: {
+    cockpit: {
       rpm: 0,
       fuel: 85,
       battery: 75,
@@ -43,7 +43,6 @@ export function useVehicleConnection(): VehicleConnection {
       nearbyTraffic: [],
       alerts: [],
     },
-
     timestamp: Date.now(),
   });
 
@@ -98,15 +97,15 @@ export function useVehicleConnection(): VehicleConnection {
     lastEmitRef.current = now;
 
     if (socketRef.current && connected) {
-      const ControlCommand: ControlCommand = { type: type as any, value };
-      socketRef.current.emit("control-input", ControlCommand);
+      const command: ControlCommand = { type: type as any, value };
+      socketRef.current.emit("control-input", command);
     }
   };
 
   return {
     socket,
     connected,
-    BatmobileState,
+    BatmobileState: batmobileState,
     sendControlCommand,
   };
 }

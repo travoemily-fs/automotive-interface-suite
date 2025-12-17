@@ -14,10 +14,12 @@ export default function Controls({
   const handleGearChange = (gear: Gear) => {
     onControl("gear", gear);
   };
+
   const handleSystemToggle = (system: string) => {
     const currentValue = systems?.[system as keyof typeof systems] || false;
     onControl(system, !currentValue);
   };
+
   return (
     <View style={styles.container}>
       {/* gear selector */}

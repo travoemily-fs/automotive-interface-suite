@@ -91,7 +91,7 @@ export default function GasPedal({ onThrottle, disabled = false }: GasPedalProps
   
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>GAS</Text>
+      <Text style={styles.label}>THROTTLE</Text>
       
       <View style={styles.pedalContainer} {...panResponder.panHandlers}>
         <Svg width={PEDAL_WIDTH} height={PEDAL_HEIGHT} style={styles.svg}>
@@ -146,7 +146,7 @@ export default function GasPedal({ onThrottle, disabled = false }: GasPedalProps
         </Svg>
       </View>
       
-      <Text style={styles.instruction}>⬆️ FASTER</Text>
+      <Text style={styles.instruction}>INCREASE THRUST</Text>
     </View>
   );
 }

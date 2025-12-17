@@ -12,7 +12,7 @@ import Controls from "./src/components/Controls";
 const { width, height } = Dimensions.get("window");
 
 export default function App() {
-  const { connected, BatmobileState, sendControlCommand } =
+  const { connected, BatmobileState: batmobileState, sendControlCommand } =
     useVehicleConnection();
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function App() {
   const handleThrottle = (value: number) => {
     sendControlCommand("throttle", value);
 
-    const currentGear = BatmobileState.controls?.gear;
+    const currentGear = batmobileState.controls?.gear;
 
     // auto-shift ONLY from park or neutral
     if (value > 0 && (currentGear === "P" || currentGear === "N")) {
@@ -70,11 +70,11 @@ export default function App() {
           </Text>
         </View>
 
-        <Text style={styles.title}>🚗 Drive Controls</Text>
+        <Text style={styles.title}>TACTICAL DRIVE CONTROLS</Text>
 
         <View style={styles.speedDisplay}>
           <Text style={styles.speedText}>
-            {Math.round(Math.abs(BatmobileState.motion?.speed || 0))}
+            {Math.round(Math.abs(batmobileState.motion?.speed || 0))}
           </Text>
           <Text style={styles.speedUnit}>MPH</Text>
         </View>
@@ -87,19 +87,19 @@ export default function App() {
           <SteeringSlider onSteer={handleSteering} />
         </View>
 
-        {/* center - vehicle info & controls */}
+        {/* center - batmobile info & controls */}
         <View style={styles.centerInfo}>
           <View style={styles.gearDisplay}>
             <Text style={styles.gearLabel}>GEAR</Text>
             <Text style={styles.gearValue}>
-              {BatmobileState.controls?.gear || "P"}
+              {batmobileState.controls?.gear || "P"}
             </Text>
           </View>
 
           <Controls
             onControl={sendControlCommand}
-            currentGear={BatmobileState.controls?.gear}
-            systems={BatmobileState.systems}
+            currentGear={batmobileState.controls?.gear}
+            systems={batmobileState.systems}
           />
         </View>
 
