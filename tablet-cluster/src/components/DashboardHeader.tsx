@@ -31,10 +31,10 @@ export default function DashboardHeader({
         </Text>
       </View>
 
-      {/* vehicle info */}
+      {/* batmobile info */}
       <View style={styles.centerSection}>
-        <Text style={styles.vehicleTitle}>AUTOMOTIVE CLUSTER</Text>
-        <Text style={styles.vehicleSubtitle}>Digital Instrument Panel</Text>
+        <Text style={styles.batmobileTitle}>WAYNE INDUSTRIES</Text>
+        <Text style={styles.batmobileSubtitle}>Digital Instrument Panel</Text>
       </View>
 
       {/* current gear and speed limit */}
@@ -99,13 +99,13 @@ const styles = StyleSheet.create({
     flex: 2,
   },
 
-  vehicleTitle: {
+  batmobileTitle: {
     color: "#00FF88",
     fontSize: 16,
     fontWeight: "bold",
   },
 
-  vehicleSubtitle: {
+  batmobileSubtitle: {
     color: "#888",
     fontSize: 12,
     marginTop: 2,

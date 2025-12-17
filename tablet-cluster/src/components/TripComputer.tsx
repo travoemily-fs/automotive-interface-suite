@@ -24,7 +24,7 @@ export default function TripComputer({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TRIP COMPUTER</Text>
+      <Text style={styles.title}>MISSION TELEMETRY</Text>
 
       <View style={styles.dataGrid}>
         {/* top row */}

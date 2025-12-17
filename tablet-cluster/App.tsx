@@ -30,21 +30,21 @@ export default function App() {
         speedLimit={BatmobileState.environment.speedLimit}
       />
 
-      {/* main gauge cluster */}
+      {/* main gauge  */}
       <MainGauges
         speed={BatmobileState.motion.speed}
-        rpm={BatmobileState.cluster.rpm}
+        rpm={BatmobileState.cockpit.rpm}
         accelerating={BatmobileState.motion.accelerating}
       />
 
       {/* status indicators & trip computer */}
       <StatusPanel
-        fuel={BatmobileState.cluster.fuel}
-        battery={BatmobileState.cluster.battery}
-        warnings={BatmobileState.cluster.warnings}
+        fuel={BatmobileState.cockpit.fuel}
+        battery={BatmobileState.cockpit.battery}
+        warnings={BatmobileState.cockpit.warnings}
         systems={BatmobileState.systems}
-        trip={BatmobileState.cluster.trip}
-        odometer={BatmobileState.cluster.odometer}
+        trip={BatmobileState.cockpit.trip}
+        odometer={BatmobileState.cockpit.odometer}
       />
     </View>
   );

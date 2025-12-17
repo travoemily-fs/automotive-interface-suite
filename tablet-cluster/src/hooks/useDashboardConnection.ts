@@ -12,7 +12,7 @@ export function useDashboardConnection(): DashboardState & {
 } {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [BatmobileState, setBatmobileState] = useState<BatmobileState>({
+  const [batmobileState, setBatmobileState] = useState<BatmobileState>({
     motion: {
       speed: 0,
       direction: 0,
@@ -32,7 +32,7 @@ export function useDashboardConnection(): DashboardState & {
       rightSignal: false,
       hazards: false,
     },
-    cluster: {
+    cockpit: {
       rpm: 0,
       fuel: 85,
       battery: 75,
@@ -45,11 +45,11 @@ export function useDashboardConnection(): DashboardState & {
       nearbyTraffic: [],
       alerts: [],
     },
-
     timestamp: Date.now(),
   });
 
   const [lastUpdate, setLastUpdate] = useState(Date.now());
+
   useEffect(() => {
     console.log("Initializing dashboard connection...");
 
@@ -88,7 +88,7 @@ export function useDashboardConnection(): DashboardState & {
 
   return {
     socket,
-    BatmobileState,
+    BatmobileState: batmobileState,
     connected,
     lastUpdate,
   };

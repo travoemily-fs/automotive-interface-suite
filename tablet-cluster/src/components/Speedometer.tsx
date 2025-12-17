@@ -250,7 +250,7 @@ function Speedometer({
         <Text style={styles.unitText}>MPH</Text>
       </View>
 
-      <Text style={styles.label}>SPEED</Text>
+      <Text style={styles.label}>VELOCITY</Text>
     </Animated.View>
   );
 }

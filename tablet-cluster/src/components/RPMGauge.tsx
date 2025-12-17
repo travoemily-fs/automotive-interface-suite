@@ -273,7 +273,7 @@ function RPMGauge({
         <Text style={styles.unitText}>x1000</Text>
       </View>
 
-      <Text style={styles.label}>RPM</Text>
+      <Text style={styles.label}>ENGINE RPM</Text>
     </Animated.View>
   );
 }

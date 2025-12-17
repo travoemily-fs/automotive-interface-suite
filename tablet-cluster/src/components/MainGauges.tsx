@@ -37,7 +37,7 @@ export default function MainGauges({
       {/* acceleration indicator */}
       {accelerating && (
         <View style={styles.accelerationIndicator}>
-          <Text style={styles.accelerationText}>⬆️ ACCEL</Text>
+          <Text style={styles.accelerationText}>⬆️ BOOST</Text>
         </View>
       )}
     </View>
