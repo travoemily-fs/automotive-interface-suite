@@ -1,7 +1,11 @@
 // import needed dependencies
 import { useState, useEffect, useCallback, useRef } from "react";
 import io, { Socket } from "socket.io-client";
-import { BatmobileState, TacticalUpdate } from "../../../shared-types";
+import {
+  BatmobileState,
+  TacticalUpdate,
+  BatSignalAlert,
+} from "../../../shared-types";
 import {
   VehiclePosition,
   SystemMetrics,
@@ -13,8 +17,10 @@ import {
 const SERVER_URL = "http://10.0.0.52:3001";
 
 export function useTrafficControl() {
-  //  socket moved from useState to useRef
+  // socket moved from useState to useRef
   const socketRef = useRef<Socket | null>(null);
+
+  const [batSignal, setBatSignal] = useState<BatSignalAlert | null>(null);
 
   const [connected, setConnected] = useState(false);
 
@@ -58,6 +64,9 @@ export function useTrafficControl() {
 
     // socket assigned to ref instead of setState
     socketRef.current = newSocket;
+
+    // expose socket for manual testing in devtools
+    window.socket = newSocket;
 
     newSocket.on("connect", () => {
       console.log("Traffic control connected to server");
@@ -122,6 +131,12 @@ export function useTrafficControl() {
         messageCountRef.current = 0;
         lastSecondRef.current = now;
       }
+    });
+
+    // receives bat-signal alerts from server
+    newSocket.on("bat-signal", (alert: BatSignalAlert) => {
+      console.log("bat-signal received:", alert);
+      setBatSignal(alert);
     });
 
     newSocket.on("connect_error", (error) => {
@@ -202,5 +217,6 @@ export function useTrafficControl() {
     updateEnvironment,
     createAlert,
     updateSpeedLimit,
+    batSignal,
   };
 }

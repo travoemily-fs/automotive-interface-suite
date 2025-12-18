@@ -7,7 +7,6 @@ import ControlPanel from "./components/ControlPanel";
 import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
-
   const {
     connected,
     vehicles,
@@ -17,6 +16,7 @@ function App() {
     updateEnvironment,
     createAlert,
     updateSpeedLimit,
+    batSignal,
   } = useTrafficControl();
 
   const handleMapClick = (lng: number, lat: number) => {
@@ -26,7 +26,6 @@ function App() {
 
   return (
     <div className="App">
-
       <header className="app-header">
         <h1>Traffic Control Center</h1>
         <div className="header-info">
@@ -36,7 +35,6 @@ function App() {
 
       <main className="app-main">
         <div className="main-grid">
-
           {/* vehicle tracking map */}
           <div className="map-section">
             <VehicleMap
@@ -64,10 +62,11 @@ function App() {
           <AdminDashboard
             metrics={systemMetrics}
             connectionStatus={connected}
+            batSignal={batSignal}
           />
         </div>
       </main>
-      
+
       <footer className="app-footer">
         <div className="footer-content">
           <span>

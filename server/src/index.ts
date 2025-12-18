@@ -7,6 +7,8 @@ import {
   BatmobileState,
   ControlCommand,
   ClientType,
+  BatSignalAlert,
+  CrimeEvent,
 } from "./../../shared-types/index.js";
 
 // express & socket.io setup
@@ -43,18 +45,18 @@ holds the initial vehicle state object in the following order:
 */
 let batmobileState: BatmobileState = {
   motion: {
-    speed: 0, // current speed in miles per hour
-    direction: 0, // heading in degrees (0-359°)
-    x: 100, // refers to horizontal position coordinate
-    y: 100, // refers to vertical position coordinate,
+    speed: 0,
+    direction: 0,
+    x: 100,
+    y: 100,
     accelerating: false,
   },
 
   controls: {
-    throttle: 0, // 0-1 from idle to full throttle
-    brake: 0, // 0-1 from no brake to full brake
-    steering: 0, // -1 to 1 w/ -1 referring to full left & 1 referring to full right
-    gear: "P", // possible values: P, R, N, D, S
+    throttle: 0,
+    brake: 0,
+    steering: 0,
+    gear: "P",
   },
 
   systems: {
@@ -65,12 +67,12 @@ let batmobileState: BatmobileState = {
   },
 
   cockpit: {
-    rpm: 0, // revolutions per minute, measures how fast engine's crankshaft spins & the number of times the crankshaft completes a full rotation in one
-    fuel: 85, // as a percentage
-    battery: 75, // as a percentage for electric vehicles only
-    warnings: [], // array of warning strings
-    trip: 0, // trip mileage ONLY
-    odometer: 45234, // TOTAL mileage
+    rpm: 0,
+    fuel: 85,
+    battery: 75,
+    warnings: [],
+    trip: 0,
+    odometer: 45234,
   },
 
   environment: {
@@ -100,6 +102,12 @@ declare module "socket.io" {
     clientType?: ClientType;
   }
 }
+
+// tracks whether bat-signal is currently active
+let batSignalActive = false;
+
+// tracks active crime events in gotham
+const activeCrimes: CrimeEvent[] = [];
 
 /*
 new clients immediately have synched vehicle state info
@@ -139,7 +147,6 @@ io.on("connection", (socket) => {
   socket.on("control-input", (data: ControlCommand) => {
     const { type, value } = data;
 
-    // updates vehicle state based on input with type-safe operations
     switch (type) {
       case "throttle":
         batmobileState.controls.throttle = Math.max(
@@ -175,67 +182,117 @@ io.on("connection", (socket) => {
         batmobileState.systems.hazards = value as boolean;
         break;
     }
-    batmobileState.timestamp = Date.now();
 
-    // broadcasts updated state to all clients
+    batmobileState.timestamp = Date.now();
     io.emit("vehicle-update", batmobileState);
+  });
+
+  // injects a crime event into the system
+  socket.on("report-crime", (crime: Omit<CrimeEvent, "id" | "timestamp">) => {
+    const newCrime: CrimeEvent = {
+      ...crime,
+      id: `crime-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+    };
+
+    activeCrimes.push(newCrime);
+
+    console.log("crime reported:", newCrime.category, newCrime.level);
   });
 });
 
-// physics simulation that runs at 20 fps w/ type-safe operations
+// physics simulation that runs at 20 fps
 setInterval(() => {
   updateVehiclePhysics();
+
+  const escalatedCrime = evaluateCrimeEscalation();
+
+  if (escalatedCrime && !batSignalActive) {
+    batSignalActive = true;
+
+    const batSignal = triggerBatSignal(escalatedCrime);
+
+    console.log("bat-signal activated:", batSignal.reason);
+    io.emit("bat-signal", batSignal);
+  }
+
   io.emit("vehicle-update", batmobileState);
 }, 50);
 
 function updateVehiclePhysics(): void {
   const { controls, motion } = batmobileState;
 
-  // simple acceleration/deceleration model
   if (controls.brake > 0) {
-    // brake always overrides throttle
-    motion.speed -= Math.sign(motion.speed || 1) * controls.brake * 1.0;
+    motion.speed -= Math.sign(motion.speed || 1) * controls.brake;
     motion.accelerating = false;
   } else if (controls.throttle > 0) {
     if (controls.gear === "D") {
       motion.speed += controls.throttle * 0.5;
-      motion.accelerating = true;
     } else if (controls.gear === "R") {
       motion.speed -= controls.throttle * 0.5;
-      motion.accelerating = true;
     }
+    motion.accelerating = true;
   } else {
     motion.speed *= 0.98;
     motion.accelerating = false;
   }
 
-  // applying speed limits
   motion.speed = Math.max(-60, Math.min(120, motion.speed));
 
-  // updates rpm based on speed and gear
   if (controls.gear === "D" || controls.gear === "R") {
     batmobileState.cockpit.rpm = Math.min(
       6000,
       motion.speed * 50 + controls.throttle * 1000,
     );
   } else {
-    batmobileState.cockpit.rpm *= 0.95; // rpm decay
+    batmobileState.cockpit.rpm *= 0.95;
+  }
+}
+
+// evaluates whether crime activity has escalated to a citywide threat
+function evaluateCrimeEscalation(): CrimeEvent | null {
+  const arkhamEscape = activeCrimes.find(
+    (crime) => crime.category === "arkham-escape" && crime.level === "citywide",
+  );
+
+  if (arkhamEscape) {
+    return arkhamEscape;
   }
 
-  // updates position based on speed and steering
-  if (motion.speed > 0) {
-    motion.direction += controls.steering * motion.speed * 0.1;
-    motion.direction = (motion.direction + 360) % 360;
+  const majorCrimes = activeCrimes.filter((crime) => crime.level === "major");
 
-    const radians = (motion.direction * Math.PI) / 180;
-    motion.x += Math.cos(radians) * motion.speed * 0.1;
-    motion.y += Math.sin(radians) * motion.speed * 0.1;
+  if (majorCrimes.length >= 2) {
+    return {
+      id: `crime-${Date.now()}`,
+      level: "citywide",
+      category: "organized-crime",
+      description: "multiple major crime events escalating across gotham",
+      location: majorCrimes[0].location,
+      timestamp: new Date().toISOString(),
+    };
   }
+
+  return null;
+}
+
+// converts a citywide crime event into a bat-signal alert
+function triggerBatSignal(crime: CrimeEvent): BatSignalAlert {
+  return {
+    id: `bat-signal-${Date.now()}`,
+    severity: "critical",
+    reason: crime.category,
+    message: `critical: ${crime.description}`,
+    vehicleId: "batmobile-01",
+    location: crime.location,
+    timestamp: new Date().toISOString(),
+  };
 }
 
 // starting the server
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`🚗 Vehicle Server running on port ${PORT}`);
-  console.log("Waiting for clients to connect...");
+  console.log(
+    `Batmobile successfully connected to private server: ${PORT}. Welcome, Mr. Wayne.`,
+  );
+  console.log("Awaiting connections.");
 });

@@ -91,3 +91,37 @@ export interface TacticalUpdate {
 
 // refers to the type of connection the client is using
 export type ClientType = "mobile" | "tablet" | "web" | "test";
+
+// bat-signal functionality
+export type AlertSeverity = "low" | "medium" | "high" | "critical";
+
+export interface BatSignalAlert {
+  id: string;  // unique id for the broadcast
+  severity: "critical";  // bat-signal only fires on critical alerts
+  reason: string;  // explanation of critical event
+  message: string;  // message appearing on batman's interface
+  vehicleId?: string;  // if the alert is tied to a specific vehicle
+  location?: { x:number; y:number; } // where the alert is occurring in gotham
+  timestamp: string;
+}
+
+// crime escalation system
+export type CrimeLevel = "none" | "suspicious" | "major" | "citywide";
+
+export type CrimeCategory =
+  | "organized-crime"
+  | "terror-threat"
+  | "armed-activity"
+  | "infrastructure-attack"
+  | "arkham-riot"
+  | "arkham-escape";
+
+export interface CrimeEvent {
+  id: string;  // denotes unique id for broadcast 
+  level: CrimeLevel; // denotes level of crime committed 
+  category: CrimeCategory;  // denotes type of crime
+  description: string;  // brief description of crime in progress
+  location: { x: number; y: number };  // where the crime is being committed in gotham
+  timestamp: string;
+}
+
