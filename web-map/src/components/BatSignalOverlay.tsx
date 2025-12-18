@@ -14,7 +14,7 @@ export default function BatSignalOverlay({
 }: BatSignalOverlayProps) {
   return (
     <div className="bat-signal-overlay" onClick={onDismiss}>
-      <div className="bat-signal-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="bat-signal-panel" onClick={(e) => e.stopPropagation()}>
         <div className="bat-signal-header">BAT-SIGNAL ACTIVATED</div>
 
         <div className="bat-signal-body">
