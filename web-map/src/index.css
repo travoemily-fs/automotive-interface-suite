@@ -2,6 +2,8 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  --font-ui: "Source Sans 3", system-ui, sans-serif;
+  --font-heading: "Good Times", system-ui, sans-serif;
 
   /* batmobile color system */
   --color-bg-primary: #0d0305; /* abyss black */
@@ -42,11 +44,23 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: var(--font-ui);
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  font-family: var(--font-heading);
+}
+
+h2,
+h3,
+.alert,
+.metric-label,
+.section-title {
+  font-family: var(--font-heading);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 button {
