@@ -15,6 +15,9 @@ import {
 const app = express();
 const server = createServer(app);
 
+// triggers one time bat-signal alert for demo
+let demoBatSignalFired = false;
+
 // enable cors for all domains (development only)
 app.use(cors());
 
@@ -24,6 +27,38 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+// random bat-signal events
+const DEMO_BAT_SIGNAL_EVENTS: Omit<BatSignalAlert, "id" | "timestamp">[] = [
+  {
+    severity: "critical",
+    reason: "arkham-escape",
+    message: "mass breakout detected at arkham asylum",
+    vehicleId: "batmobile-01",
+    location: { x: 420, y: 690 },
+  },
+  {
+    severity: "critical",
+    reason: "joker-riot",
+    message: "citywide riot incited by joker factions",
+    vehicleId: "batmobile-01",
+    location: { x: 380, y: 610 },
+  },
+  {
+    severity: "critical",
+    reason: "scarecrow-toxin",
+    message: "fear toxin released in downtown sector",
+    vehicleId: "batmobile-01",
+    location: { x: 510, y: 450 },
+  },
+  {
+    severity: "critical",
+    reason: "blackgate-break",
+    message: "blackgate prison breach confirmed",
+    vehicleId: "batmobile-01",
+    location: { x: 300, y: 520 },
+  },
+];
 
 function emitConnectionStats() {
   io.emit("connection-stats", {
@@ -296,3 +331,24 @@ server.listen(PORT, () => {
   );
   console.log("Awaiting connections.");
 });
+
+// one-shot demo bat-signal trigger (fires once after 1.5 minutes)
+setTimeout(() => {
+  if (demoBatSignalFired) return;
+  demoBatSignalFired = true;
+
+  const baseEvent =
+    DEMO_BAT_SIGNAL_EVENTS[
+      Math.floor(Math.random() * DEMO_BAT_SIGNAL_EVENTS.length)
+    ];
+
+  const demoBatSignal: BatSignalAlert = {
+    ...baseEvent,
+    id: `bat-signal-demo-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+  };
+
+  console.log(`bat-signal fired: ${demoBatSignal.reason}`);
+
+  io.emit("bat-signal", demoBatSignal);
+}, 90_000);
