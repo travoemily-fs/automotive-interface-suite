@@ -5,6 +5,7 @@ import { useTrafficControl } from "./hooks/useTrafficControl";
 import VehicleMap from "./components/VehicleMap";
 import ControlPanel from "./components/ControlPanel";
 import AdminDashboard from "./components/AdminDashboard";
+import BatSignalOverlay from "./components/BatSignalOverlay";
 
 function App() {
   const {
@@ -19,6 +20,8 @@ function App() {
     batSignal,
   } = useTrafficControl();
 
+  const [showBatSignal, setShowBatSignal] = React.useState(true);
+
   const handleMapClick = (lng: number, lat: number) => {
     console.log(`Map clicked at: (${lng.toFixed(4)}, ${lat.toFixed(4)})`);
     // could add functionality to create alerts at clicked location
@@ -26,6 +29,12 @@ function App() {
 
   return (
     <div className="App">
+      {batSignal && showBatSignal && (
+        <BatSignalOverlay
+          alert={batSignal}
+          onDismiss={() => setShowBatSignal(false)}
+        />
+      )}
       <header className="app-header">
         <h1>Traffic Control Center</h1>
         <div className="header-info">
@@ -62,7 +71,6 @@ function App() {
           <AdminDashboard
             metrics={systemMetrics}
             connectionStatus={connected}
-            batSignal={batSignal}
           />
         </div>
       </main>

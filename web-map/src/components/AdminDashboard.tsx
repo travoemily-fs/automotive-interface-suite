@@ -2,18 +2,15 @@
 import React from "react";
 import "./AdminDashboard.css";
 import { SystemMetrics } from "@/types/web";
-import { BatSignalAlert } from "../../../shared-types";
 
 interface AdminDashboardProps {
   metrics: SystemMetrics;
   connectionStatus: boolean;
-  batSignal: BatSignalAlert | null;
 }
 
 export default function AdminDashboard({
   metrics,
   connectionStatus,
-  batSignal,
 }: AdminDashboardProps) {
   const formatUptime = (uptime: number): string => {
     const hours = Math.floor(uptime / 3600);
@@ -44,24 +41,6 @@ export default function AdminDashboard({
     <>
       <div className="admin-dashboard">
         <h3>System Administration</h3>
-
-        {batSignal && (
-          <div className="bat-signal-alert">
-            <div className="bat-signal-header">🦇 BAT-SIGNAL ACTIVATED</div>
-
-            <div className="bat-signal-body">
-              <div>
-                <strong>Threat:</strong> {batSignal.reason}
-              </div>
-              <div>
-                <strong>Message:</strong> {batSignal.message}
-              </div>
-              <div>
-                <strong>Severity:</strong> {batSignal.severity.toUpperCase()}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* system status overview */}
         <div className="status-grid">
