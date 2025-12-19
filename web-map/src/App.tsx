@@ -6,6 +6,8 @@ import VehicleMap from "./components/VehicleMap";
 import ControlPanel from "./components/ControlPanel";
 import AdminDashboard from "./components/AdminDashboard";
 import BatSignalOverlay from "./components/BatSignalOverlay";
+import { CiBarcode, CiGrid31, CiGlobe } from "react-icons/ci";
+
 
 function App() {
   const {
@@ -36,9 +38,12 @@ function App() {
         />
       )}
       <header className="app-header">
-        <h1>Traffic Control Center</h1>
+        <h1>WAYNE TECHNOLOGIES</h1>
         <div className="header-info">
-          <span>Real-time Vehicle Monitoring & Management System</span>
+          <span>
+            <CiGlobe className="globeIcon" />
+            BAT-MOBILE VEHICLE TELEMETRY SYSTEM
+          </span>
         </div>
       </header>
 
@@ -78,9 +83,16 @@ function App() {
       <footer className="app-footer">
         <div className="footer-content">
           <span>
-            Automotive Interface Suite • Lesson 4: Web Traffic Control Center
+            <CiBarcode className="barcode" /> PROPERTY OF WAYNE ENTERPRISES
           </span>
-          <span>Status: {connected ? "🟢 Connected" : "🔴 Disconnected"}</span>
+
+          <span>
+            <b className="systemBold">
+              <CiGrid31 className="gridIcon" />
+              system status:
+            </b>{" "}
+            {connected ? "Connected" : "Disconnected"}
+          </span>
         </div>
       </footer>
     </div>

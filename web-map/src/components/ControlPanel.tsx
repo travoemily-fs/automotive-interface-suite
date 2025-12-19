@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import "./ControlPanel.css";
 import { TrafficAlert } from "../types/web";
 import { BatmobileEnvironment } from "../../../shared-types";
+import { CiWarning, CiRoute, CiFlag1, CiSquareAlert } from "react-icons/ci";
 
 interface ControlPanelProps {
   onSpeedLimitChange: (limit: number) => void;
@@ -14,10 +15,10 @@ interface ControlPanelProps {
 
 const SPEED_LIMITS = [25, 35, 45, 55, 65, 75, 85];
 const ALERT_TYPES = [
-  { value: "construction", label: "Construction Work", icon: "🚧" },
-  { value: "accident", label: "Traffic Accident", icon: "💥" },
-  { value: "weather", label: "Weather Hazard", icon: "🌧️" },
-  { value: "emergency", label: "Emergency Response", icon: "🚨" },
+  { value: "construction", label: "Construction", icon: <CiWarning /> },
+  { value: "accident", label: "Accident", icon: <CiRoute /> },
+  { value: "weather", label: "Hazard", icon: <CiFlag1 /> },
+  { value: "emergency", label: "Police Activity", icon: <CiSquareAlert /> },
 ] as const;
 
 export default function ControlPanel({
@@ -35,7 +36,6 @@ export default function ControlPanel({
     active: true,
   });
 
-  const [weatherCondition, setWeatherCondition] = useState<string>("clear");
   const [emergencyMode, setEmergencyMode] = useState(false);
 
   const handleSpeedLimitChange = (limit: number) => {
@@ -57,25 +57,6 @@ export default function ControlPanel({
         -74.006 + (Math.random() - 0.5) * 0.02, // random location around gotham
         40.7128 + (Math.random() - 0.5) * 0.02,
       ] as [number, number],
-    });
-  };
-
-  const handleWeatherChange = (condition: string) => {
-    setWeatherCondition(condition);
-
-    // adjusts speed limits based on weather
-    let weatherSpeedLimit = currentSpeedLimit;
-    if (condition === "rain" || condition === "snow") {
-      weatherSpeedLimit = Math.max(25, currentSpeedLimit - 15);
-    } else if (condition === "fog") {
-      weatherSpeedLimit = Math.max(25, currentSpeedLimit - 25);
-    }
-
-    onEnvironmentUpdate({
-      speedLimit: weatherSpeedLimit,
-      alerts: [
-        `Weather condition: ${condition}. Reduced speed limit in effect.`,
-      ],
     });
   };
 
@@ -109,21 +90,23 @@ export default function ControlPanel({
 
   return (
     <div className="control-panel">
-      <h3>Traffic Control Center</h3>
+      <h3>Urban Systems Command Center</h3>
 
       {/* speed limit controls */}
       <div className="control-section">
-        <h4>Speed Limit Management</h4>
+        <h4>Velocity Constraint</h4>
         <div className="speed-limit-controls">
           <div className="current-speed">
-            <span>Current: </span>
+            <span> </span>
             <span className="speed-value">{currentSpeedLimit} MPH</span>
           </div>
           <div className="speed-buttons">
             {SPEED_LIMITS.map((limit) => (
               <button
                 key={limit}
-                className={`speed-button ${currentSpeedLimit === limit ? "active" : ""}`}
+                className={`speed-button ${
+                  currentSpeedLimit === limit ? "active" : ""
+                }`}
                 onClick={() => handleSpeedLimitChange(limit)}>
                 {limit}
               </button>
@@ -134,10 +117,10 @@ export default function ControlPanel({
 
       {/* alert creation */}
       <div className="control-section">
-        <h4>Traffic Alert System</h4>
+        <h4>Environmental Event</h4>
         <div className="alert-form">
           <div className="form-row">
-            <label>Alert Type:</label>
+            <label>Type:</label>
             <select
               value={newAlert.type}
               onChange={(e) =>
@@ -149,7 +132,7 @@ export default function ControlPanel({
               className="alert-select">
               {ALERT_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
-                  {type.icon} {type.label}
+                  {type.label}
                 </option>
               ))}
             </select>
@@ -161,7 +144,9 @@ export default function ControlPanel({
               {(["low", "medium", "high"] as const).map((severity) => (
                 <button
                   key={severity}
-                  className={`severity-button ${severity} ${newAlert.severity === severity ? "active" : ""}`}
+                  className={`severity-button ${severity} ${
+                    newAlert.severity === severity ? "active" : ""
+                  }`}
                   onClick={() => setNewAlert({ ...newAlert, severity })}>
                   {severity.toUpperCase()}
                 </button>
@@ -170,7 +155,7 @@ export default function ControlPanel({
           </div>
 
           <div className="form-row">
-            <label>Message:</label>
+            <label>System Directive:</label>
             <textarea
               value={newAlert.message}
               onChange={(e) =>
@@ -183,7 +168,7 @@ export default function ControlPanel({
           </div>
 
           <div className="form-row">
-            <label>Position (Lat/Lng):</label>
+            <label>Target Zone:</label>
             <div className="position-controls">
               <input
                 type="range"
@@ -231,34 +216,20 @@ export default function ControlPanel({
           </div>
 
           <button className="create-alert-button" onClick={handleCreateAlert}>
-            🚨 Create Alert
+            Broadcast Alert
           </button>
         </div>
       </div>
 
       {/* environmental controls */}
       <div className="control-section">
-        <h4>Environmental Conditions</h4>
-        <div className="weather-controls">
-          <div className="form-row">
-            <label>Weather:</label>
-            <select
-              value={weatherCondition}
-              onChange={(e) => handleWeatherChange(e.target.value)}
-              className="weather-select">
-              <option value="clear">☀️ Clear</option>
-              <option value="rain">🌧️ Rain</option>
-              <option value="snow">❄️ Snow</option>
-              <option value="fog">🌫️ Fog</option>
-            </select>
-          </div>
-        </div>
+        <h4>System Overrides</h4>
 
         <div className="emergency-controls">
           <button
             className={`emergency-button ${emergencyMode ? "active" : ""}`}
             onClick={handleEmergencyMode}>
-            🚨 {emergencyMode ? "DEACTIVATE" : "ACTIVATE"} EMERGENCY MODE
+            {emergencyMode ? "DEACTIVATE" : "ACTIVATE"} EMERGENCY MODE
           </button>
         </div>
       </div>
@@ -273,17 +244,19 @@ export default function ControlPanel({
             .map((alert) => (
               <div
                 key={alert.id}
-                className={`alert-item severity-${alert.severity}`}>
+                className={`alert-item severity-${alert.severity} ${
+                  alert.type === "emergency" ? "batsignal" : ""
+                }`}>
                 <span className="alert-icon">
-                  {alert.type === "construction"
-                    ? "🚧"
-                    : alert.type === "accident"
-                      ? "💥"
-                      : alert.type === "weather"
-                        ? "🌧️"
-                        : alert.type === "emergency"
-                          ? "🚨"
-                          : "⚠️"}
+                  {alert.type === "construction" ? (
+                    <CiWarning />
+                  ) : alert.type === "accident" ? (
+                    <CiRoute />
+                  ) : alert.type === "weather" ? (
+                    <CiFlag1 />
+                  ) : alert.type === "emergency" ? (
+                    <CiSquareAlert />
+                  ) : null}
                 </span>
 
                 <span className="alert-text">{alert.message}</span>

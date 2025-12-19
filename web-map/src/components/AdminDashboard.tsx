@@ -2,6 +2,7 @@
 import React from "react";
 import "./AdminDashboard.css";
 import { SystemMetrics } from "@/types/web";
+import { CiWifiOn, CiClock1, CiSatellite1, CiDatabase } from "react-icons/ci";
 
 interface AdminDashboardProps {
   metrics: SystemMetrics;
@@ -16,7 +17,9 @@ export default function AdminDashboard({
     const hours = Math.floor(uptime / 3600);
     const minutes = Math.floor((uptime % 3600) / 60);
     const seconds = Math.floor(uptime % 60);
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const getTotalConnections = (): number => {
@@ -28,15 +31,28 @@ export default function AdminDashboard({
 
   const getLatencyStatus = (): { color: string; status: string } => {
     if (metrics.networkLatency < 50)
-      return { color: "#00FF88", status: "Excellent" };
+      return {
+        color: "var(--color-title-blue)",
+        status: "Excellent",
+      };
     if (metrics.networkLatency < 100)
-      return { color: "#FFD400", status: "Good" };
+      return {
+        color: "var(--color-accent-light-red)",
+        status: "Good",
+      };
     if (metrics.networkLatency < 200)
-      return { color: "#FFA500", status: "Fair" };
-    return { color: "#FF4444", status: "Poor" };
+      return {
+        color: "var(--color-text-accent)",
+        status: "Fair",
+      };
+    return {
+      color: "var(--color-alert-critical)",
+      status: "Poor",
+    };
   };
 
   const latencyStatus = getLatencyStatus();
+
   return (
     <>
       <div className="admin-dashboard">
@@ -46,31 +62,37 @@ export default function AdminDashboard({
         <div className="status-grid">
           <div className="status-card">
             <div className="status-header">
-              <span className="status-icon">🔗</span>
+              <span className="status-icon">
+                <CiWifiOn className="connectedIcon" />
+              </span>
               <span className="status-title">Connection</span>
             </div>
             <div
-              className={`status-value ${connectionStatus ? "connected" : "disconnected"}`}>
+              className={`status-value ${
+                connectionStatus ? "connected" : "disconnected"
+              }`}>
               {connectionStatus ? "ONLINE" : "OFFLINE"}
             </div>
-            <div className="status-subtitle">Server Status</div>
           </div>
 
           <div className="status-card">
             <div className="status-header">
-              <span className="status-icon">⏱️</span>
+              <span className="status-icon">
+                <CiClock1 className="uptimeIcon" />
+              </span>
               <span className="status-title">Uptime</span>
             </div>
 
             <div className="status-value">
               {formatUptime(metrics.serverUptime)}
             </div>
-            <div className="status-subtitle">Hours:Minutes:Seconds</div>
           </div>
 
           <div className="status-card">
             <div className="status-header">
-              <span className="status-icon">📡</span>
+              <span className="status-icon">
+                <CiSatellite1 className="latencyIcon" />
+              </span>
               <span className="status-title">Latency</span>
             </div>
 
@@ -79,16 +101,16 @@ export default function AdminDashboard({
               style={{ color: latencyStatus.color }}>
               {metrics.networkLatency}ms
             </div>
-            <div className="status-subtitle">{latencyStatus.status}</div>
           </div>
 
           <div className="status-card">
             <div className="status-header">
-              <span className="status-icon">📊</span>
+              <span className="status-icon">
+                <CiDatabase className="messagesIcon" />
+              </span>
               <span className="status-title">Throughput</span>
             </div>
             <div className="status-value">{metrics.messagesPerSecond}</div>
-            <div className="status-subtitle">Messages/Second</div>
           </div>
         </div>
 
@@ -97,7 +119,6 @@ export default function AdminDashboard({
           <h4>Connected Devices ({getTotalConnections()})</h4>
           <div className="devices-grid">
             <div className="device-card mobile">
-              <div className="device-icon">📱</div>
               <div className="device-info">
                 <div className="device-type">Mobile Controls</div>
                 <div className="device-count">
@@ -114,7 +135,6 @@ export default function AdminDashboard({
             </div>
 
             <div className="device-card tablet">
-              <div className="device-icon">📺</div>
               <div className="device-info">
                 <div className="device-type">Tablet Clusters</div>
                 <div className="device-count">
@@ -131,7 +151,6 @@ export default function AdminDashboard({
             </div>
 
             <div className="device-card web">
-              <div className="device-icon">🖥️</div>
               <div className="device-info">
                 <div className="device-type">Web Interfaces</div>
                 <div className="device-count">
@@ -148,7 +167,6 @@ export default function AdminDashboard({
             </div>
 
             <div className="device-card test">
-              <div className="device-icon">🔧</div>
               <div className="device-info">
                 <div className="device-type">Test Clients</div>
                 <div className="device-count">
@@ -170,7 +188,7 @@ export default function AdminDashboard({
           <h4>Performance Metrics</h4>
           <div className="metrics-charts">
             <div className="metric-item">
-              <div className="metric-label">Network Health</div>
+              <div className="metric-label">Network Health:</div>
               <div className="metric-bar">
                 <div
                   className="metric-fill"
@@ -189,7 +207,7 @@ export default function AdminDashboard({
             </div>
 
             <div className="metric-item">
-              <div className="metric-label">Message Rate</div>
+              <div className="metric-label">Message Rate:</div>
               <div className="metric-bar">
                 <div
                   className="metric-fill"
@@ -200,10 +218,10 @@ export default function AdminDashboard({
                     )}%`,
                     backgroundColor:
                       metrics.messagesPerSecond > 30
-                        ? "#FF4444"
+                        ? "var(--color-alert-critical)"
                         : metrics.messagesPerSecond > 15
-                          ? "#FFD400"
-                          : "#00FF88",
+                          ? "var(--color-accent-light-red)"
+                          : "var(--color-title-blue)",
                   }}></div>
               </div>
 
@@ -213,7 +231,7 @@ export default function AdminDashboard({
             </div>
 
             <div className="metric-item">
-              <div className="metric-label">System Load</div>
+              <div className="metric-label">System Load:</div>
               <div className="metric-bar">
                 <div
                   className="metric-fill"
@@ -221,10 +239,10 @@ export default function AdminDashboard({
                     width: `${Math.min(100, getTotalConnections() * 10)}%`,
                     backgroundColor:
                       getTotalConnections() > 8
-                        ? "#FF4444"
+                        ? "var(--color-alert-critical)"
                         : getTotalConnections() > 4
-                          ? "#FFD400"
-                          : "#00FF88",
+                          ? "var(--color-accent-light-red)"
+                          : "var(--color-title-blue)",
                   }}></div>
               </div>
 

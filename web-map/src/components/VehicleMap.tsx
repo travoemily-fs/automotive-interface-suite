@@ -4,6 +4,14 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./VehicleMap.css";
 import { VehiclePosition, SpeedZone, TrafficAlert } from "../types/web";
+import {
+  CiLocationOn,
+  CiWarning,
+  CiRoute,
+  CiCloud,
+  CiSquareAlert,
+  CiLocationArrow1,
+} from "react-icons/ci";
 
 // set mapbox access token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -58,143 +66,37 @@ export default function VehicleMap({
       try {
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
-          style: "mapbox://styles/mapbox/dark-v11", // dark theme for traffic control center
-          center: [-74.006, 40.7128], // gotham (nyc)
+          style: "mapbox://styles/mapbox/dark-v11",
+          center: [-74.006, 40.7128],
           zoom: 12,
           bearing: 0,
           pitch: 0,
         });
 
-        // adds map controls
         map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
         map.current.addControl(new mapboxgl.FullscreenControl(), "top-right");
+
         map.current.on("click", (e) => {
           onMapClickRef.current(e.lngLat.lng, e.lngLat.lat);
         });
 
-        map.current.on("error", (e) => {
-          console.error("Mapbox error:", e);
-        });
-
-        // custom map styling for traffic control
         map.current.on("load", () => {
           setMapLoaded(true);
 
-          // adds custom styling for traffic management
           map.current!.setPaintProperty(
             "road-primary",
             "line-color",
-            "#00FF88",
+            "#7389a5",
           );
           map.current!.setPaintProperty(
             "road-secondary-tertiary",
             "line-color",
-            "#FFD400",
+            "#923434",
           );
-          map.current!.setPaintProperty("road-street", "line-color", "#888888");
-
-          // adds traffic flow visualization layer
-          map.current!.addLayer({
-            id: "traffic-flow",
-
-            type: "line",
-
-            source: {
-              type: "geojson",
-              data: {
-                type: "FeatureCollection",
-                features: [],
-              },
-            },
-
-            layout: {
-              "line-join": "round",
-              "line-cap": "round",
-            },
-
-            paint: {
-              "line-color": "#FF4444",
-              "line-width": 3,
-              "line-opacity": 0.8,
-            },
-          });
-
-          // adds speed zones layer
-          map.current!.addLayer({
-            id: "speed-zones",
-            type: "circle",
-            source: {
-              type: "geojson",
-              data: {
-                type: "FeatureCollection",
-                features: [],
-              },
-            },
-
-            paint: {
-              "circle-radius": [
-                "interpolate",
-                ["linear"],
-                ["get", "radius"],
-                0,
-                0,
-                1000,
-                50,
-              ],
-
-              "circle-color": [
-                "case",
-                ["<=", ["get", "speedLimit"], 35],
-                "rgba(255, 68, 68, 0.3)",
-                ["<=", ["get", "speedLimit"], 55],
-                "rgba(255, 212, 0, 0.3)",
-                "rgba(0, 255, 136, 0.3)",
-              ],
-
-              "circle-stroke-color": [
-                "case",
-                ["<=", ["get", "speedLimit"], 35],
-                "#FF4444",
-                ["<=", ["get", "speedLimit"], 55],
-                "#FFD400",
-                "#00FF88",
-              ],
-
-              "circle-stroke-width": 2,
-            },
-          });
-
-          // adds vehicles layer using geojson for optimal performance and coordinate accuracy
-          map.current!.addLayer({
-            id: "vehicles",
-            type: "circle",
-            source: {
-              type: "geojson",
-              data: {
-                type: "FeatureCollection",
-                features: [],
-              },
-            },
-            paint: {
-              "circle-radius": 8,
-              "circle-color": [
-                "case",
-                [">", ["get", "speed"], 60],
-                "#FF4444",
-                [">", ["get", "speed"], 30],
-                "#FFD400",
-                [">", ["get", "speed"], 0],
-                "#00FF88",
-                "#888",
-              ],
-              "circle-stroke-color": "#fff",
-              "circle-stroke-width": 2,
-            },
-          });
+          map.current!.setPaintProperty("road-street", "line-color", "#666");
         });
       } catch (error) {
         console.error("Error setting up map:", error);
-        return;
       }
     }, 100);
 
@@ -207,53 +109,36 @@ export default function VehicleMap({
     };
   }, []);
 
-  // updates vehicles using geojson layers for optimal performance and coordinate accuracy
+  // updates vehicles
   useEffect(() => {
     if (!map.current || !mapLoaded) return;
-    try {
-      // converts vehicles to geojson features
-      const features = vehicles.map((vehicle) => ({
-        type: "Feature" as const,
-        geometry: {
-          type: "Point" as const,
-          coordinates: vehicle.coordinates,
-        },
 
-        properties: {
-          id: vehicle.id,
-          speed: vehicle.speed,
-          bearing: vehicle.bearing,
-          lastUpdate: vehicle.lastUpdate,
-        },
-      }));
+    const features = vehicles.map((vehicle) => ({
+      type: "Feature" as const,
+      geometry: {
+        type: "Point" as const,
+        coordinates: vehicle.coordinates,
+      },
+      properties: {
+        id: vehicle.id,
+        speed: vehicle.speed,
+      },
+    }));
 
-      // updates the vehicles layer data - this approach eliminates parallax issues
-      const source = map.current.getSource(
-        "vehicles",
-      ) as mapboxgl.GeoJSONSource;
-      if (source) {
-        source.setData({
-          type: "FeatureCollection",
-          features,
-        });
+    const source = map.current.getSource("vehicles") as mapboxgl.GeoJSONSource;
 
-        // reduced logging frequency
-        if (vehicles.length > 0) {
-          console.log(
-            `Updated ${features.length} vehicles on map - Vehicle 1 at: [${vehicles[0].coordinates[0].toFixed(4)}, ${vehicles[0].coordinates[1].toFixed(4)}] Speed: ${Math.round(vehicles[0].speed)} MPH`,
-          );
-        }
-      } else {
-        console.warn("Vehicles source not found");
-      }
-    } catch (error) {
-      console.error("Error updating vehicles:", error);
+    if (source) {
+      source.setData({
+        type: "FeatureCollection",
+        features,
+      });
     }
   }, [vehicles, mapLoaded]);
 
   // updates speed zones
   useEffect(() => {
     if (!map.current || !mapLoaded) return;
+
     const features = speedZones
       .filter((zone) => zone.active)
       .map((zone) => ({
@@ -263,7 +148,6 @@ export default function VehicleMap({
           coordinates: zone.center,
         },
         properties: {
-          id: zone.id,
           speedLimit: zone.speedLimit,
           radius: zone.radius,
         },
@@ -272,6 +156,7 @@ export default function VehicleMap({
     const source = map.current.getSource(
       "speed-zones",
     ) as mapboxgl.GeoJSONSource;
+
     if (source) {
       source.setData({
         type: "FeatureCollection",
@@ -283,42 +168,27 @@ export default function VehicleMap({
   // updates traffic alerts
   useEffect(() => {
     if (!map.current || !mapLoaded) return;
-    // removes old alert markers
+
     alertMarkers.current.forEach((marker) => marker.remove());
     alertMarkers.current.clear();
-    // adds new alert markers
+
     alerts
       .filter((alert) => alert.active)
       .forEach((alert) => {
-        const alertElement = document.createElement("div");
-        alertElement.className = `alert-marker severity-${alert.severity}`;
-        alertElement.innerHTML = `
-        <div class="alert-icon">
-          ${
-            alert.type === "construction"
-              ? "🚧"
-              : alert.type === "accident"
-                ? "💥"
-                : alert.type === "weather"
-                  ? "🌧️"
-                  : alert.type === "emergency"
-                    ? "🚨"
-                    : "⚠️"
-          }
-        </div>
-      `;
+        const el = document.createElement("div");
+        el.className = `alert-marker severity-${alert.severity} type-${alert.type}`;
 
-        const marker = new mapboxgl.Marker(alertElement)
+        el.innerHTML = `<span class="alert-icon"></span>`;
+
+        const marker = new mapboxgl.Marker(el)
           .setLngLat(alert.coordinates)
           .addTo(map.current!);
 
-        // adds popup with alert info
         const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
           <div class="alert-popup severity-${alert.severity}">
-            <h4>${alert.type.charAt(0).toUpperCase() + alert.type.slice(1)} Alert</h4>
-            <p><strong>Severity:</strong> ${alert.severity.toUpperCase()}</p>
-            <p><strong>Message:</strong> ${alert.message}</p>
-            <p><strong>Time:</strong> ${new Date(alert.timestamp).toLocaleTimeString()}</p>
+            <h4>${alert.type.toUpperCase()}</h4>
+            <p>${alert.message}</p>
+            <p>${new Date(alert.timestamp).toLocaleTimeString()}</p>
           </div>
         `);
 
@@ -330,23 +200,29 @@ export default function VehicleMap({
   return (
     <div className="vehicle-map-container">
       <div className="map-header">
-        <h3>Real-Time Traffic Control Center</h3>
+        <h3>Urban Traffic Surveillance</h3>
 
         <div className="map-controls">
           <div className="map-stats">
-            <span>📍 Vehicles: {vehicles.length}</span>
-            <span>⚠️ Alerts: {alerts.filter((a) => a.active).length}</span>
             <span>
-              🚦 Speed Zones: {speedZones.filter((z) => z.active).length}
+              <CiLocationOn className="vehiclesIcon" /> <b>Vehicles:</b>{" "}
+               {vehicles.length}
+            </span>
+            <span>
+              <CiWarning className="alertsIcon" /> <b>Alerts:</b>{" "}
+              {alerts.filter((a) => a.active).length}
+            </span>
+            <span>
+              <CiRoute className="zonesIcon" /> <b>Zones:</b>{" "}
+              {speedZones.filter((z) => z.active).length}
             </span>
           </div>
 
           <button
             className="locate-vehicles-btn"
             onClick={centerOnVehicles}
-            disabled={vehicles.length === 0}
-            title="Center map on vehicles">
-            🎯 Locate Vehicles
+            disabled={vehicles.length === 0}>
+            <CiLocationArrow1 className="locateIcon" /> Locate Vehicles
           </button>
         </div>
       </div>
@@ -360,36 +236,37 @@ export default function VehicleMap({
 
             <div className="legend-item">
               <div className="legend-color speed-normal"></div>
-              <span>Normal Speed (0-30 MPH)</span>
+              <span>Normal</span>
             </div>
 
             <div className="legend-item">
               <div className="legend-color speed-moderate"></div>
-              <span>Moderate Speed (30-60 MPH)</span>
+              <span>Moderate</span>
             </div>
 
             <div className="legend-item">
               <div className="legend-color speed-high"></div>
-              <span>High Speed (60+ MPH)</span>
+              <span>Critical</span>
             </div>
 
             <hr />
 
             <h4>Alert Types</h4>
+
             <div className="legend-item">
-              <span>🚧 Construction</span>
+              <CiWarning /> Construction
             </div>
 
             <div className="legend-item">
-              <span>💥 Accident</span>
+              <CiRoute /> Accident
             </div>
 
             <div className="legend-item">
-              <span>🌧️ Weather</span>
+              <CiCloud /> Weather
             </div>
 
             <div className="legend-item">
-              <span>🚨 Emergency</span>
+              <CiSquareAlert /> Emergency
             </div>
           </div>
         </div>

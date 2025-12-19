@@ -1,9 +1,19 @@
+@font-face {
+  font-family: "tsing";
+  src:
+    url("./assets/fonts/Tsing.woff2") format("woff2"),
+    url("./assets/fonts/Tsing.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  --font-ui: "Source Sans 3", system-ui, sans-serif;
-  --font-heading: "Good Times", system-ui, sans-serif;
+  --font-ui: "nexa", system-ui, sans-serif;
+  --font-heading: "tsing", system-ui, sans-serif;
 
   /* batmobile color system */
   --color-bg-primary: #0d0305; /* abyss black */
