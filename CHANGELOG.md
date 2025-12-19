@@ -28,4 +28,6 @@ trying to focus so much on ensuring my coding style was identical to what was pr
 
 `thursday, december 18th:` began construction of bat-signal alert after deciding on logic of functionality. bat-signal will be raised when a normal alert crosses a severity threshold. by building off of the pre-existing traffic alert structure, alert severity will be added to trigger a bat-signal response when appropriate. finished with bat-signal alert which operates with a random critical-level alert across web dashboard after 1.30 minutes. successful implementation of crime escalation along with lore-friendly crime events to maintain complete immersion. beginning project-wide ui/ux overall. starting with web dashboard and building out. established root color scheme with new palette and changed body and heading/alert text to fonts hosted by adobe.
 
-`friday, december 19th:` starting the day with the web dashboard overhaul. will begin with removing unwanted features amd layout redesign. 
+`friday, december 19th:` starting the day with the web dashboard overhaul. will begin with removing unwanted features amd layout redesign. successful redesign of control panel, admin dashboard, and map section. theming integrated throughout. still left: bat-signal alert styling, wiring alert system to register bat-signal & batman logo for hero section. 
+
+`saturday, december 20th:`
