@@ -30,4 +30,4 @@ trying to focus so much on ensuring my coding style was identical to what was pr
 
 `friday, december 19th:` starting the day with the web dashboard overhaul. will begin with removing unwanted features amd layout redesign. successful redesign of control panel, admin dashboard, and map section. theming integrated throughout. still left: bat-signal alert styling, wiring alert system to register bat-signal & batman logo for hero section. 
 
-`saturday, december 20th:` completed the dashboard web overhaul. will add batman logo in after web and tablet ui redesigns are complete. tackling the tablet redesign first.
+`saturday, december 20th:` completed the dashboard web overhaul. will add batman logo in after web and tablet ui redesigns are complete. tackling the tablet redesign first. everything aside from the gauges are updated in the tablet ui. will address gauges tomorrow before finishing ui redesign with the mobile overhaul. 

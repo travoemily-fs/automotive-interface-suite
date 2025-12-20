@@ -3,42 +3,48 @@ import React from "react";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
 import StatusIndicator from "./StatusIndicator";
 import { WarningSystemProps } from "../types/dashboard";
+import { colors, typography, spacing } from "../theme/tabletTheme";
+
+import LightIcon from "../../assets/icons/light.svg";
+import LeftIcon from "../../assets/icons/circle_chev_left.svg";
+import RightIcon from "../../assets/icons/circle_chev_right.svg";
+import WarningIcon from "../../assets/icons/warning.svg";
 
 export default function WarningPanel({ warnings, system }: WarningSystemProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>SYSTEM STATUS</Text>
+      <Text style={styles.title}>system status</Text>
 
       {/* system indicators row */}
       <View style={styles.indicatorRow}>
         <StatusIndicator
           active={system.lights}
           type="info"
-          icon="💡"
-          label="LIGHTS"
+          icon={<LightIcon width={22} height={22} stroke={colors.titleBlue} />}
+          label="lights"
         />
 
         <StatusIndicator
           active={system.leftSignal}
           type="warning"
-          icon="⬅️"
-          label="LEFT"
+          icon={<LeftIcon width={22} height={22} stroke={colors.titleBlue} />}
+          label="left"
           blinking={system.leftSignal}
         />
 
         <StatusIndicator
           active={system.rightSignal}
           type="warning"
-          icon="➡️"
-          label="RIGHT"
+          icon={<RightIcon width={22} height={22} stroke={colors.titleBlue} />}
+          label="right"
           blinking={system.rightSignal}
         />
 
         <StatusIndicator
           active={system.hazards}
           type="danger"
-          icon="⚠️"
-          label="HAZARD"
+          icon={<WarningIcon width={22} height={22} stroke={colors.alertLightRed} />}
+          label="hazard"
           blinking={system.hazards}
         />
       </View>
@@ -46,13 +52,14 @@ export default function WarningPanel({ warnings, system }: WarningSystemProps) {
       {/* warning messages */}
       {warnings.length > 0 && (
         <View style={styles.warningSection}>
-          <Text style={styles.warningTitle}>SYSTEM ALERTS</Text>
+          <Text style={styles.warningTitle}>system alerts</Text>
+
           <ScrollView
             style={styles.warningList}
             showsVerticalScrollIndicator={false}>
             {warnings.map((warning, index) => (
               <Text key={index} style={styles.warningText}>
-                ⚠️ {warning}
+                {warning}
               </Text>
             ))}
           </ScrollView>
@@ -64,49 +71,52 @@ export default function WarningPanel({ warnings, system }: WarningSystemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#1a1a1a",
-    borderRadius: 10,
-    padding: 15,
-    margin: 10,
-    borderWidth: 1,
-    borderColor: "#333",
+    flex: 1,
+    gap: spacing.md,
   },
 
   title: {
-    color: "#888",
-    fontSize: 12,
-    fontWeight: "bold",
+    fontFamily: typography.fontHeading,
+    fontSize: typography.sizes.display,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
     textAlign: "center",
-    marginBottom: 10,
+    color: colors.titleBlue,
+    opacity: 1,
   },
 
   indicatorRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: spacing.sm,
+    flexWrap: "nowrap",
   },
 
   warningSection: {
-    marginTop: 15,
     borderTopWidth: 1,
-    borderTopColor: "#333",
-    paddingTop: 10,
+    borderTopColor: colors.borderSubtle,
+    paddingTop: spacing.sm,
+    gap: spacing.xs,
   },
 
   warningTitle: {
-    color: "#FF4444",
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 5,
+    fontFamily: typography.fontUIBold,
+    fontSize: typography.sizes.label,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: colors.alertLightRed,
   },
 
   warningList: {
-    maxHeight: 80,
+    maxHeight: 90,
   },
 
   warningText: {
-    color: "#FF6666",
-    fontSize: 11,
-    marginBottom: 3,
+    fontFamily: typography.fontUI,
+    fontSize: typography.sizes.label,
+    lineHeight: 15,
+    color: colors.textPrimary,
+    opacity: 1,
   },
 });

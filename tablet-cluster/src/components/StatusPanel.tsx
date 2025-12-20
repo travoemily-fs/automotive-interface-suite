@@ -1,11 +1,10 @@
 // import needed dependencies
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
 import WarningPanel from "./WarningPanel";
 import TripComputer from "./TripComputer";
 import { StatusPanelProps } from "../types/dashboard";
-
-const { width } = Dimensions.get("window");
+import { colors, spacing, radius, elevation } from "../theme/tabletTheme";
 
 export default function StatusPanel({
   fuel,
@@ -15,14 +14,15 @@ export default function StatusPanel({
   trip,
   odometer,
 }: StatusPanelProps) {
-    
   return (
     <View style={styles.container}>
-      <View style={styles.leftPanel}>
+      {/* system status */}
+      <View style={styles.panelShell}>
         <WarningPanel warnings={warnings} system={systems} />
       </View>
 
-      <View style={styles.rightPanel}>
+      {/* mission telemetry */}
+      <View style={styles.panelShell}>
         <TripComputer
           fuel={fuel}
           battery={battery}
@@ -37,16 +37,19 @@ export default function StatusPanel({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingBottom: 20,
-    gap: 10,
+    gap: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
   },
 
-  leftPanel: {
+  panelShell: {
     flex: 1,
+    padding: spacing.md,
+    backgroundColor: colors.bgPanelOverlay,
+    borderRadius: radius.lg,
+    ...elevation.panel,
   },
-
-  rightPanel: {
-    flex: 1,
+  telemetryShell: {
+    backgroundColor: colors.bgPanel,
   },
 });

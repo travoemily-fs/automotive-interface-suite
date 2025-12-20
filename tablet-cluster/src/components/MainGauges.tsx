@@ -13,28 +13,31 @@ export default function MainGauges({
   accelerating,
 }: MainGaugesProps) {
   return (
-    <View style={styles.container}>
-      {/* speedometer - primary gauge */}
-      <View style={styles.primaryGauge}>
-        <Speedometer
-          speed={speed}
-          size={width > 600 ? 240 : 200}
-          maxSpeed={120}
-          speedLimit={55}
-        />
+    <View>
+      {/* main gauges row */}
+      <View style={styles.container}>
+        {/* speedometer - primary gauge */}
+        <View style={styles.primaryGauge}>
+          <Speedometer
+            speed={speed}
+            size={width > 600 ? 240 : 200}
+            maxSpeed={120}
+            speedLimit={55}
+          />
+        </View>
+
+        {/* rpm gauge - secondary gauge */}
+        <View style={styles.secondaryGauge}>
+          <RPMGauge
+            rpm={rpm}
+            size={width > 600 ? 200 : 160}
+            maxRpm={6000}
+            redLine={5000}
+          />
+        </View>
       </View>
 
-      {/* rpm gauge - secondary gauge */}
-      <View style={styles.secondaryGauge}>
-        <RPMGauge
-          rpm={rpm}
-          size={width > 600 ? 200 : 160}
-          maxRpm={6000}
-          redLine={5000}
-        />
-      </View>
-
-      {/* acceleration indicator */}
+      {/* acceleration indicator (temporary, safe placement) */}
       {accelerating && (
         <View style={styles.accelerationIndicator}>
           <Text style={styles.accelerationText}>⬆️ BOOST</Text>
@@ -46,28 +49,29 @@ export default function MainGauges({
 
 const styles = StyleSheet.create({
   container: {
+    width: "100%",
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 20,
-    gap: 20,
   },
 
   primaryGauge: {
+    flex: 2,
     alignItems: "center",
   },
 
   secondaryGauge: {
+    flex: 1,
     alignItems: "center",
   },
 
   accelerationIndicator: {
-    position: "absolute",
-    top: 10,
-    right: 20,
+    alignSelf: "center",
+    marginTop: 8,
     backgroundColor: "#00FF88",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 15,
   },
 

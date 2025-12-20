@@ -27,3 +27,6 @@ no batmobile would be complete without an intricate alert system to tell batman 
 installation guide
 
 ## design credits
+[using SVGs with expo](https://docs.expo.dev/guides/using-svg/)
+[svg declarations in typescript](https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html)
+[react native metro bundler](https://facebook.github.io/metro/docs/configuration)

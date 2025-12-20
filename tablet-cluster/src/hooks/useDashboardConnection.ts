@@ -58,7 +58,7 @@ export function useDashboardConnection(): DashboardState & {
     });
 
     newSocket.on("connect", () => {
-      console.log("Dashboard connected to vehicle server");
+      console.log("Dashboard connected to secure server");
       setConnected(true);
 
       // registers as tablet client
@@ -66,7 +66,7 @@ export function useDashboardConnection(): DashboardState & {
     });
 
     newSocket.on("disconnect", () => {
-      console.log("Dashboard disconnected from vehicle server");
+      console.log("Dashboard disconnected from secure server");
       setConnected(false);
     });
 

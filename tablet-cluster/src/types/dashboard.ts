@@ -1,5 +1,6 @@
 // import needed dependencies
 import { BatmobileState } from "./../../../shared-types/index";
+import { ReactNode } from "react";
 
 // gauge config interfaces
 export interface GaugeProps {
@@ -36,7 +37,7 @@ export interface RPMGaugeProps {
 export interface StatusIndicatorProps {
   active: boolean;
   type: "warning" | "info" | "success" | "danger";
-  icon: string;
+  icon: ReactNode;
   label: string;
   blinking?: boolean;
 }

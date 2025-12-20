@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TripComputerProps } from "../types/dashboard";
+import { colors, typography, spacing, radius } from "../theme/tabletTheme";
 
 export default function TripComputer({
   trip,
@@ -9,92 +10,78 @@ export default function TripComputer({
   fuel,
   battery,
 }: TripComputerProps) {
-  // calculates estimated range based on fuel/battery
-  const estimatedRange = Math.round((fuel / 100) * 300); // assuming 300 mile range
-  const batteryRange = Math.round((battery / 100) * 250); // assuming 250 mile electric range
+  // estimated ranges
+  const estimatedRange = Math.round((fuel / 100) * 300);
+  const batteryRange = Math.round((battery / 100) * 250);
 
-  // formats large numbers with commas
-  const formatOdometer = (value: number): string => {
-    return value.toLocaleString();
-  };
+  const formatOdometer = (value: number): string => value.toLocaleString();
+  const formatTrip = (value: number): string => value.toFixed(1);
 
-  const formatTrip = (value: number): string => {
-    return value.toFixed(1);
-  };
+  const getFuelColor = () =>
+    fuel < 20 ? colors.titleBlue : colors.alertLightRed;
+
+  const getBatteryColor = () =>
+    battery < 20 ? colors.alertLightRed : colors.titleBlue;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>MISSION TELEMETRY</Text>
+      <Text style={styles.title}>mission telemetry</Text>
 
       <View style={styles.dataGrid}>
-        {/* top row */}
+        {/* trip */}
         <View style={styles.dataItem}>
-          <Text style={styles.dataLabel}>TRIP</Text>
+          <Text style={styles.dataLabel}>trip</Text>
           <Text style={styles.dataValue}>{formatTrip(trip)}</Text>
           <Text style={styles.dataUnit}>mi</Text>
         </View>
 
+        {/* odometer */}
         <View style={styles.dataItem}>
-          <Text style={styles.dataLabel}>ODOMETER</Text>
+          <Text style={styles.dataLabel}>odometer</Text>
           <Text style={styles.dataValue}>{formatOdometer(odometer)}</Text>
           <Text style={styles.dataUnit}>mi</Text>
         </View>
 
-        {/* bottom row */}
+        {/* fuel */}
         <View style={styles.dataItem}>
-          <Text style={styles.dataLabel}>FUEL</Text>
-          <Text
-            style={[
-              styles.dataValue,
-              { color: fuel < 20 ? "#FF4444" : "#00FF88" },
-            ]}>
+          <Text style={styles.dataLabel}>fuel</Text>
+          <Text style={[styles.dataValue, { color: getFuelColor() }]}>
             {fuel.toFixed(0)}%
           </Text>
-          <Text style={styles.dataUnit}>~{estimatedRange}mi</Text>
+          <Text style={styles.dataUnit}>~{estimatedRange} mi</Text>
         </View>
 
+        {/* battery */}
         <View style={styles.dataItem}>
-          <Text style={styles.dataLabel}>BATTERY</Text>
-          <Text
-            style={[
-              styles.dataValue,
-              { color: battery < 20 ? "#FF4444" : "#00AAFF" },
-            ]}>
+          <Text style={styles.dataLabel}>battery</Text>
+          <Text style={[styles.dataValue, { color: getBatteryColor() }]}>
             {battery.toFixed(0)}%
           </Text>
-          <Text style={styles.dataUnit}>~{batteryRange}mi</Text>
+          <Text style={styles.dataUnit}>~{batteryRange} mi</Text>
         </View>
       </View>
 
-      {/* fuel/battery level bars */}
+      {/* level bars */}
       <View style={styles.levelBars}>
         <View style={styles.levelBar}>
-          <View style={styles.levelBarBackground} />
           <View
             style={[
-              styles.levelBarFill,
+              styles.levelFill,
               {
                 width: `${fuel}%`,
-                backgroundColor:
-                  fuel < 20 ? "#FF4444" : fuel < 50 ? "#FFD700" : "#00FF88",
+                backgroundColor: getFuelColor(),
               },
             ]}
           />
         </View>
 
         <View style={styles.levelBar}>
-          <View style={styles.levelBarBackground} />
           <View
             style={[
-              styles.levelBarFill,
+              styles.levelFill,
               {
                 width: `${battery}%`,
-                backgroundColor:
-                  battery < 20
-                    ? "#FF4444"
-                    : battery < 50
-                    ? "#FFD700"
-                    : "#00AAFF",
+                backgroundColor: getBatteryColor(),
               },
             ]}
           />
@@ -106,20 +93,17 @@ export default function TripComputer({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#1a1a1a",
-    borderRadius: 10,
-    padding: 15,
-    margin: 10,
-    borderWidth: 1,
-    borderColor: "#333",
+    gap: spacing.md,
   },
 
   title: {
-    color: "#888",
-    fontSize: 12,
-    fontWeight: "bold",
+    fontFamily: typography.fontHeading,
+    fontSize: typography.sizes.display,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
     textAlign: "center",
-    marginBottom: 15,
+    color: colors.titleBlue,
+    opacity: 0.9,
   },
 
   dataGrid: {
@@ -131,47 +115,45 @@ const styles = StyleSheet.create({
   dataItem: {
     width: "48%",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: spacing.md,
   },
 
   dataLabel: {
-    color: "#666",
-    fontSize: 10,
-    marginBottom: 3,
+    fontFamily: typography.fontUI,
+    fontSize: typography.sizes.label,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: colors.textMuted,
+    marginBottom: spacing.xs,
   },
 
   dataValue: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: typography.fontUIBold,
+    fontSize: typography.sizes.heading,
+    color: colors.textPrimary,
   },
 
   dataUnit: {
-    color: "#888",
-    fontSize: 9,
-    marginTop: 2,
+    fontFamily: typography.fontUI,
+    fontSize: typography.sizes.small,
+    color: colors.textMuted,
+    textTransform: "uppercase",
+    marginTop: spacing.xs,
   },
 
   levelBars: {
-    gap: 8,
+    gap: spacing.sm,
   },
 
   levelBar: {
     height: 6,
-    position: "relative",
-    borderRadius: 3,
+    borderRadius: radius.sm,
+    backgroundColor: colors.borderSubtle,
     overflow: "hidden",
   },
 
-  levelBarBackground: {
-    position: "absolute",
-    width: "100%",
+  levelFill: {
     height: "100%",
-    backgroundColor: "#333",
-  },
-
-  levelBarFill: {
-    height: "100%",
-    borderRadius: 3,
+    borderRadius: radius.sm,
   },
 });

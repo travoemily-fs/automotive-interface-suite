@@ -1,9 +1,8 @@
 // import needed dependencies
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { DashboardHeaderProps } from "../types/dashboard";
-
-const { width } = Dimensions.get("window");
+import { colors, typography, spacing, radius } from "../theme/tabletTheme";
 
 export default function DashboardHeader({
   connected,
@@ -12,51 +11,47 @@ export default function DashboardHeader({
   speedLimit,
 }: DashboardHeaderProps) {
   const timeSinceUpdate = Date.now() - lastUpdate;
-  const isStale = timeSinceUpdate > 5000; // 5 seconds
+  const isStale = timeSinceUpdate > 5000;
+
+  const statusColor = connected
+    ? isStale
+      ? colors.textPrimary
+      : colors.textPrimary
+    : colors.textPrimary;
 
   return (
     <View style={styles.container}>
-      {/* connection status */}
+      {/* system status */}
       <View style={styles.statusSection}>
-        <View
-          style={[
-            styles.statusDot,
-            {
-              backgroundColor: connected && !isStale ? "#4CAF50" : "#F44336",
-            },
-          ]}
-        />
-        <Text style={styles.statusText}>
-          {connected ? (isStale ? "STALE DATA" : "CONNECTED") : "DISCONNECTED"}
+        <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
+        <Text style={[styles.statusText, { color: statusColor }]}>
+          {connected ? (isStale ? "DATA STALE" : "ONLINE") : "OFFLINE"}
         </Text>
       </View>
 
-      {/* batmobile info */}
+      {/* identity */}
       <View style={styles.centerSection}>
-        <Text style={styles.batmobileTitle}>WAYNE INDUSTRIES</Text>
-        <Text style={styles.batmobileSubtitle}>Digital Instrument Panel</Text>
+        <Text style={styles.brand}>WAYNE INDUSTRIES</Text>
+        <Text style={styles.subtitle}>BATMOBILE INTERFACE</Text>
       </View>
 
-      {/* current gear and speed limit */}
+      {/* vehicle state */}
       <View style={styles.infoSection}>
-        <View style={styles.gearDisplay}>
-          <Text style={styles.gearLabel}>GEAR</Text>
+        <View style={styles.readout}>
+          <Text style={styles.readoutLabel}>GEAR</Text>
           <Text
             style={[
-              styles.gearValue,
-              {
-                color:
-                  gear === "P" ? "#888" : gear === "R" ? "#FF4444" : "#00FF88",
-              },
+              styles.readoutValue,
+              gear === "R" && { color: colors.alertLightRed },
             ]}>
             {gear}
           </Text>
         </View>
 
-        <View style={styles.speedLimitDisplay}>
-          <Text style={styles.speedLimitLabel}>LIMIT</Text>
-          <Text style={styles.speedLimitValue}>{speedLimit}</Text>
-          <Text style={styles.speedLimitUnit}>MPH</Text>
+        <View style={styles.readout}>
+          <Text style={styles.readoutLabel}>LIMIT</Text>
+          <Text style={styles.readoutValue}>{speedLimit}</Text>
+          <Text style={styles.unit}>MPH</Text>
         </View>
       </View>
     </View>
@@ -67,96 +62,87 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: "#2a2a2a",
-    borderBottomWidth: 2,
-    borderBottomColor: "#444",
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
+    backgroundColor: "rgba(15, 18, 22, 0.65)",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSubtle,
   },
 
   statusSection: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
+    paddingTop: 25,
+    gap: spacing.sm,
+    color: colors.textPrimary,
   },
 
   statusDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 8,
   },
 
   statusText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
+    fontFamily: typography.fontUIBold,
+    fontSize: typography.sizes.micro,
+    letterSpacing: 0.8,
+    color: colors.textPrimary,
+    textTransform: "uppercase",
   },
 
   centerSection: {
-    alignItems: "center",
     flex: 2,
+    alignItems: "center",
   },
 
-  batmobileTitle: {
-    color: "#00FF88",
-    fontSize: 16,
-    fontWeight: "bold",
+  brand: {
+    fontFamily: typography.fontHeading,
+    fontSize: typography.sizes.display,
+    letterSpacing: 1.2,
+    paddingTop: 25,
+    color: colors.alertLightRed,
   },
 
-  batmobileSubtitle: {
-    color: "#888",
-    fontSize: 12,
+  subtitle: {
     marginTop: 2,
+    fontFamily: typography.fontUI,
+    fontSize: typography.sizes.small,
+    letterSpacing: 0.6,
+    color: colors.textPrimary,
   },
 
   infoSection: {
-    flexDirection: "row",
-    alignItems: "center",
     flex: 1,
+    flexDirection: "row",
     justifyContent: "flex-end",
-    gap: 20,
+    gap: spacing.lg,
   },
 
-  gearDisplay: {
+  readout: {
     alignItems: "center",
-    backgroundColor: "#1a1a1a",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#444",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm,
+    paddingTop: 15,
   },
 
-  gearLabel: {
-    color: "#666",
-    fontSize: 10,
+  readoutLabel: {
+    fontFamily: typography.fontUI,
+    fontSize: typography.sizes.micro,
+    color: colors.textPrimary,
   },
 
-  gearValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 2,
+  readoutValue: {
+    fontFamily: typography.fontUIBold,
+    fontSize: typography.sizes.display,
+    color: colors.alertLightRed,
   },
 
-  speedLimitDisplay: {
-    alignItems: "center",
-  },
-
-  speedLimitLabel: {
-    color: "#666",
-    fontSize: 10,
-  },
-
-  speedLimitValue: {
-    color: "#FFD700",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  speedLimitUnit: {
-    color: "#888",
-    fontSize: 8,
+  unit: {
+    fontFamily: typography.fontUI,
+    fontSize: typography.sizes.micro,
+    color: colors.textPrimary,
   },
 });
