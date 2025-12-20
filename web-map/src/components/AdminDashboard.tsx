@@ -252,26 +252,6 @@ export default function AdminDashboard({
             </div>
           </div>
         </div>
-
-        {/* system info */}
-        <div className="system-info">
-          <div className="info-row">
-            <span className="info-label">Last Update:</span>
-            <span className="info-value">
-              {new Date(metrics.lastUpdate).toLocaleTimeString()}
-            </span>
-          </div>
-
-          <div className="info-row">
-            <span className="info-label">Server Version:</span>
-            <span className="info-value">Automotive Suite v1.0.0</span>
-          </div>
-
-          <div className="info-row">
-            <span className="info-label">Protocol:</span>
-            <span className="info-value">WebSocket + Socket.IO</span>
-          </div>
-        </div>
       </div>
     </>
   );

@@ -206,7 +206,7 @@ export default function VehicleMap({
           <div className="map-stats">
             <span>
               <CiLocationOn className="vehiclesIcon" /> <b>Vehicles:</b>{" "}
-               {vehicles.length}
+              {vehicles.length}
             </span>
             <span>
               <CiWarning className="alertsIcon" /> <b>Alerts:</b>{" "}
@@ -254,19 +254,19 @@ export default function VehicleMap({
             <h4>Alert Types</h4>
 
             <div className="legend-item">
-              <CiWarning /> Construction
+              <CiWarning className="legendIcons" /> Construction
             </div>
 
             <div className="legend-item">
-              <CiRoute /> Accident
+              <CiRoute className="legendIcons" /> Accident
             </div>
 
             <div className="legend-item">
-              <CiCloud /> Weather
+              <CiCloud className="legendIcons" /> Weather
             </div>
 
             <div className="legend-item">
-              <CiSquareAlert /> Emergency
+              <CiSquareAlert className="legendIcons" /> Emergency
             </div>
           </div>
         </div>

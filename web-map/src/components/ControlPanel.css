@@ -112,8 +112,13 @@
   color: var(--color-text-primary);
   font-size: 12px;
   font-weight: bold;
-  padding-top:4px;
+  padding-top: 4px;
   text-transform: uppercase;
+}
+
+.form-row ::placeholder {
+  color: var(--color-text-primary);
+  font-size: 12px;
 }
 
 .alert-select,
@@ -233,10 +238,9 @@
   color: var(--color-text-primary);
   font-size: 11px;
   text-transform: uppercase;
-  font-weight:bold;
-  padding-top:1px;
+  font-weight: bold;
+  padding-top: 1px;
   color: var(--color-accent-light-red);
-
 }
 
 .create-alert-button {
@@ -266,15 +270,18 @@
   background: #40010d86;
   border: 1px ridge #923434;
   border-radius: 8px;
+  display: flex;
+  padding-top:17px;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-heading);
   color: var(--color-text-primary);
   font-weight: bold;
   font-size: 23px;
-  vertical-align:middle;
-  align-items: center;
-  line-height:auto;
+  line-height: 1;
+  text-transform: uppercase;
+
   cursor: pointer;
-  text-align: center;
   transition: all 0.3s ease;
 }
 

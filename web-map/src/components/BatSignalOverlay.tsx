@@ -2,34 +2,53 @@
 import React from "react";
 import "./BatSignalOverlay.css";
 import { BatSignalAlert } from "../../../shared-types";
+import { CiGps, CiSquareAlert, CiWarning } from "react-icons/ci";
 
 interface BatSignalOverlayProps {
   alert: BatSignalAlert;
-  onDismiss: () => void;
+  onAcknowledge: (alert: BatSignalAlert) => void;
 }
 
 export default function BatSignalOverlay({
   alert,
-  onDismiss,
+  onAcknowledge,
 }: BatSignalOverlayProps) {
+  const handleAcknowledge = () => {
+    onAcknowledge(alert);
+  };
+
   return (
-    <div className="bat-signal-overlay" onClick={onDismiss}>
+    <div className="bat-signal-overlay" onClick={handleAcknowledge}>
       <div className="bat-signal-panel" onClick={(e) => e.stopPropagation()}>
         <div className="bat-signal-header">BAT-SIGNAL ACTIVATED</div>
 
         <div className="bat-signal-body">
           <div>
-            <strong>Threat:</strong> {alert.reason}
+            <strong>
+              <CiGps className="threatIcon" />
+              Threat:
+            </strong>
+            <div className="details">{alert.reason}</div>
           </div>
+
           <div>
-            <strong>Message:</strong> {alert.message}
+            <strong>
+              <CiSquareAlert className="descIcon" />
+              Message:
+            </strong>
+            <div className="details">{alert.message}</div>
           </div>
+
           <div>
-            <strong>Severity:</strong> {alert.severity.toUpperCase()}
+            <strong>
+              <CiWarning className="severityIcon" />
+              Severity:
+            </strong>
+            <div className="details">{alert.severity.toUpperCase()}</div>
           </div>
         </div>
 
-        <button className="bat-signal-dismiss" onClick={onDismiss}>
+        <button className="bat-signal-dismiss" onClick={handleAcknowledge}>
           Acknowledge
         </button>
       </div>

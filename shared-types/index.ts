@@ -110,11 +110,11 @@ export type CrimeLevel = "none" | "suspicious" | "major" | "citywide";
 
 export type CrimeCategory =
   | "organized-crime"
-  | "terror-threat"
+  | "terror threat"
   | "armed-activity"
   | "infrastructure-attack"
-  | "arkham-riot"
-  | "arkham-escape";
+  | "arkham riot"
+  | "arkham escape";
 
 export interface CrimeEvent {
   id: string;  // denotes unique id for broadcast 

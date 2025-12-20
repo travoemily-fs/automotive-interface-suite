@@ -6,8 +6,7 @@ import VehicleMap from "./components/VehicleMap";
 import ControlPanel from "./components/ControlPanel";
 import AdminDashboard from "./components/AdminDashboard";
 import BatSignalOverlay from "./components/BatSignalOverlay";
-import { CiBarcode, CiGrid31, CiGlobe } from "react-icons/ci";
-
+import { CiBarcode, CiGlobe } from "react-icons/ci";
 
 function App() {
   const {
@@ -34,7 +33,7 @@ function App() {
       {batSignal && showBatSignal && (
         <BatSignalOverlay
           alert={batSignal}
-          onDismiss={() => setShowBatSignal(false)}
+          onAcknowledge={() => setShowBatSignal(false)}
         />
       )}
       <header className="app-header">
@@ -87,10 +86,7 @@ function App() {
           </span>
 
           <span>
-            <b className="systemBold">
-              <CiGrid31 className="gridIcon" />
-              system status:
-            </b>{" "}
+            <b className="systemBold">system status:</b>{" "}
             {connected ? "Connected" : "Disconnected"}
           </span>
         </div>

@@ -32,28 +32,28 @@ const io = new Server(server, {
 const DEMO_BAT_SIGNAL_EVENTS: Omit<BatSignalAlert, "id" | "timestamp">[] = [
   {
     severity: "critical",
-    reason: "arkham-escape",
+    reason: "arkham escape",
     message: "mass breakout detected at arkham asylum",
     vehicleId: "batmobile-01",
     location: { x: 420, y: 690 },
   },
   {
     severity: "critical",
-    reason: "joker-riot",
+    reason: "joker riot",
     message: "citywide riot incited by joker factions",
     vehicleId: "batmobile-01",
     location: { x: 380, y: 610 },
   },
   {
     severity: "critical",
-    reason: "scarecrow-toxin",
+    reason: "scarecrow toxin",
     message: "fear toxin released in downtown sector",
     vehicleId: "batmobile-01",
     location: { x: 510, y: 450 },
   },
   {
     severity: "critical",
-    reason: "blackgate-break",
+    reason: "blackgate break",
     message: "blackgate prison breach confirmed",
     vehicleId: "batmobile-01",
     location: { x: 300, y: 520 },
@@ -287,7 +287,7 @@ function updateVehiclePhysics(): void {
 // evaluates whether crime activity has escalated to a citywide threat
 function evaluateCrimeEscalation(): CrimeEvent | null {
   const arkhamEscape = activeCrimes.find(
-    (crime) => crime.category === "arkham-escape" && crime.level === "citywide",
+    (crime) => crime.category === "arkham escape" && crime.level === "citywide",
   );
 
   if (arkhamEscape) {

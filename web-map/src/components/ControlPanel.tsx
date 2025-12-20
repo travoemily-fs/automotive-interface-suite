@@ -161,7 +161,7 @@ export default function ControlPanel({
               onChange={(e) =>
                 setNewAlert({ ...newAlert, message: e.target.value })
               }
-              placeholder="Enter alert message for drivers..."
+              placeholder="ALERTS IMMEDIATELY FORWARD TO GOTHAM POLICE DEPARTMENT."
               className="alert-message"
               rows={2}
             />

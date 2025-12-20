@@ -185,13 +185,13 @@
   background-color: var(--color-bg-primary);
   border-radius: 8px;
   overflow: hidden;
-  border: 1px ridge var(--color-text-accent);
+  border: 1px ridge var(--color-alert-critical);
 }
 
 .metric-fill {
   height: 100%;
   border-radius: 8px;
-  background: #40010d !important;
+  background: #40010d64 !important;
   box-shadow: 0 0 8px #40010d80;
 }
 
@@ -206,7 +206,6 @@
 /* system info */
 .system-info {
   background-color: #0d030530;
-  border: 1px ridge var(--color-text-accent);
   border-radius: 6px;
   padding: 15px;
   margin-top: 20px;
@@ -224,7 +223,7 @@
 }
 
 .info-label {
-  color: #888;
+  color: var(--color-title-blue);
   font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
@@ -233,6 +232,7 @@
 .info-value {
   color: var(--color-text-primary);
   font-size: 12px;
+  text-transform:uppercase;
 }
 
 /* responsive design */
