@@ -13,34 +13,28 @@ export default function MainGauges({
   accelerating,
 }: MainGaugesProps) {
   return (
-    <View>
+    <View style={styles.wrapper}>
       {/* main gauges row */}
       <View style={styles.container}>
-        {/* speedometer - primary gauge */}
-        <View style={styles.primaryGauge}>
-          <Speedometer
-            speed={speed}
-            size={width > 600 ? 240 : 200}
-            maxSpeed={120}
-            speedLimit={55}
-          />
-        </View>
+        <Speedometer
+          speed={speed}
+          size={width > 900 ? 280 : 240}
+          maxSpeed={120}
+          speedLimit={55}
+        />
 
-        {/* rpm gauge - secondary gauge */}
-        <View style={styles.secondaryGauge}>
-          <RPMGauge
-            rpm={rpm}
-            size={width > 600 ? 200 : 160}
-            maxRpm={6000}
-            redLine={5000}
-          />
-        </View>
+        <RPMGauge
+          rpm={rpm}
+          size={width > 900 ? 260 : 220}
+          maxRpm={6000}
+          redLine={5000}
+        />
       </View>
 
       {/* acceleration indicator (temporary, safe placement) */}
       {accelerating && (
         <View style={styles.accelerationIndicator}>
-          <Text style={styles.accelerationText}>⬆️ BOOST</Text>
+          <Text style={styles.accelerationText}>ACCELERATING</Text>
         </View>
       )}
     </View>
@@ -48,35 +42,31 @@ export default function MainGauges({
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    width: "100%",
+    alignItems: "center",
+  },
+
   container: {
     width: "100%",
+    maxWidth: 900,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignItems: "center",
-    paddingVertical: 20,
-  },
-
-  primaryGauge: {
-    flex: 2,
-    alignItems: "center",
-  },
-
-  secondaryGauge: {
-    flex: 1,
-    alignItems: "center",
+    paddingVertical: 30,
   },
 
   accelerationIndicator: {
     alignSelf: "center",
     marginTop: 8,
-    backgroundColor: "#00FF88",
-    paddingHorizontal: 12,
+    backgroundColor: "#923434",
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 15,
+    borderRadius: 16,
   },
 
   accelerationText: {
-    color: "#000",
+    color: "#c1c3c7",
     fontSize: 12,
     fontWeight: "bold",
   },

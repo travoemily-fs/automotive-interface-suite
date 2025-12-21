@@ -135,9 +135,10 @@ const styles = StyleSheet.create({
   },
 
   readoutValue: {
-    fontFamily: typography.fontUIBold,
+    fontFamily: typography.fontHeading,
     fontSize: typography.sizes.display,
     color: colors.alertLightRed,
+    paddingTop: 10,
   },
 
   unit: {

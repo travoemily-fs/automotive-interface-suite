@@ -9,68 +9,35 @@ import Svg, {
   Defs,
   RadialGradient,
   Stop,
-  G,
 } from "react-native-svg";
 import { SpeedometerProps } from "../types/dashboard";
-import {
-  calculateGaugePosition,
-  generateGaugePath,
-  formatSpeed,
-} from "../utils/gaugeUtils";
+import { generateGaugePath, formatSpeed } from "../utils/gaugeUtils";
+import { colors, typography } from "../theme/tabletTheme";
 
-const SPEEDOMETER_SIZE = 200;
+const SPEEDOMETER_SIZE = 280;
 const CENTER_X = SPEEDOMETER_SIZE / 2;
 const CENTER_Y = SPEEDOMETER_SIZE / 2;
-const GAUGE_RADIUS = 80;
-const NEEDLE_LENGTH = 70;
-
-// creation of animated svg group
-const AnimatedG = Animated.createAnimatedComponent(G);
+const GAUGE_RADIUS = 120;
 
 function Speedometer({
   speed,
   size = SPEEDOMETER_SIZE,
   maxSpeed = 120,
   speedLimit = 55,
-  color = "#00FF88",
 }: SpeedometerProps) {
-  const needleRotation = useRef(new Animated.Value(-120)).current;
   const scaleValue = useRef(new Animated.Value(1)).current;
-
   const displaySpeed = Math.abs(speed);
 
   useEffect(() => {
-    // calculates target needle angle
-    const gaugeCalc = calculateGaugePosition(
-      displaySpeed,
-      0,
-      maxSpeed,
-      -120,
-      120,
-      CENTER_X,
-      CENTER_Y,
-      NEEDLE_LENGTH,
-      speedLimit * 0.9, // warning at 90% of speed limit
-      speedLimit, // danger at speed limit
-    );
-
-    // animates needle to new position
-    Animated.timing(needleRotation, {
-      toValue: gaugeCalc.angle,
-      duration: 300,
-      useNativeDriver: false, // svg animations require this to be false
-    }).start();
-
-    // pulse effect when over speed limit
-    if (speed > speedLimit) {
+    if (displaySpeed > speedLimit) {
       Animated.sequence([
         Animated.timing(scaleValue, {
-          toValue: 1.05,
+          toValue: 1.04,
           duration: 200,
           useNativeDriver: true,
         }),
         Animated.timing(scaleValue, {
-          toValue: 1.0,
+          toValue: 1,
           duration: 200,
           useNativeDriver: true,
         }),
@@ -78,24 +45,23 @@ function Speedometer({
     }
 
     return () => {
-      needleRotation.stopAnimation();
       scaleValue.stopAnimation();
     };
-  }, [speed, speedLimit, maxSpeed]);
+  }, [displaySpeed, speedLimit]);
 
   // generates tick marks for speedometer
   const generateTickMarks = () => {
     const ticks = [];
-    const tickCount = 13; // 0, 10, 20, ... 120
+    const tickCount = 12;
 
     for (let i = 0; i <= tickCount; i++) {
       const value = (maxSpeed / tickCount) * i;
       const angle = -120 + (240 / tickCount) * i;
       const radians = (angle * Math.PI) / 180;
 
-      const isMajor = i % 2 === 0; // every OTHER tick is major
-      const tickLength = isMajor ? 15 : 8;
-      const tickWidth = isMajor ? 2 : 1;
+      const isMajor = i % 2 === 0;
+      const tickLength = isMajor ? 16 : 8;
+      const tickOpacity = isMajor ? 0.9 : 0.4;
 
       const startRadius = GAUGE_RADIUS - tickLength;
       const endRadius = GAUGE_RADIUS;
@@ -112,16 +78,16 @@ function Speedometer({
           y1={y1}
           x2={x2}
           y2={y2}
-          stroke={value > speedLimit ? "#FF4444" : "#666"}
-          strokeWidth={tickWidth}
+          stroke={value >= speedLimit ? colors.alertLightRed : colors.titleBlue}
+          strokeWidth={isMajor ? 2 : 1}
+          opacity={tickOpacity}
         />,
       );
 
-      // adds numbers for major ticks
       if (isMajor) {
-        const numberRadius = GAUGE_RADIUS - 25;
+        const numberRadius = GAUGE_RADIUS - 36;
         const numberX = CENTER_X + Math.cos(radians) * numberRadius;
-        const numberY = CENTER_Y + Math.sin(radians) * numberRadius + 5; // offset for text baseline
+        const numberY = CENTER_Y + Math.sin(radians) * numberRadius + 4;
 
         ticks.push(
           <SvgText
@@ -129,8 +95,9 @@ function Speedometer({
             x={numberX}
             y={numberY}
             fontSize="12"
-            fill={value > speedLimit ? "#FF4444" : "#888"}
-            textAnchor="middle">
+            fill={value >= speedLimit ? colors.alertLightRed : colors.textMuted}
+            textAnchor="middle"
+            fontFamily={typography.fontUI}>
             {Math.round(value)}
           </SvgText>,
         );
@@ -146,18 +113,8 @@ function Speedometer({
       <Svg width={size} height={size}>
         <Defs>
           <RadialGradient id="gaugeGradient" cx="50%" cy="50%">
-            <Stop offset="0%" stopColor="#1a1a1a" />
-            <Stop offset="100%" stopColor="#0a0a0a" />
-          </RadialGradient>
-          <RadialGradient id="needleGradient" cx="30%" cy="30%">
-            <Stop
-              offset="0%"
-              stopColor={speed > speedLimit ? "#FF6666" : color}
-            />
-            <Stop
-              offset="100%"
-              stopColor={speed > speedLimit ? "#FF0000" : "#008844"}
-            />
+            <Stop offset="0%" stopColor={colors.bgPanelOverlay} />
+            <Stop offset="100%" stopColor={colors.bgPrimary} />
           </RadialGradient>
         </Defs>
 
@@ -167,7 +124,7 @@ function Speedometer({
           cy={CENTER_Y}
           r={GAUGE_RADIUS}
           fill="url(#gaugeGradient)"
-          stroke="#333"
+          stroke={colors.borderSubtle}
           strokeWidth="2"
         />
 
@@ -176,14 +133,14 @@ function Speedometer({
           d={generateGaugePath(
             CENTER_X,
             CENTER_Y,
-            GAUGE_RADIUS - 5,
+            GAUGE_RADIUS - 8,
             -120,
             -120 + (240 * speedLimit) / maxSpeed,
           )}
-          stroke="#FFD700"
-          strokeWidth="4"
+          stroke={colors.titleBlue}
+          strokeWidth="5"
           fill="none"
-          opacity="0.6"
+          opacity="0.45"
         />
 
         {/* danger zone arc */}
@@ -191,62 +148,26 @@ function Speedometer({
           d={generateGaugePath(
             CENTER_X,
             CENTER_Y,
-            GAUGE_RADIUS - 5,
+            GAUGE_RADIUS - 8,
             -120 + (240 * speedLimit) / maxSpeed,
             120,
           )}
-          stroke="#FF4444"
-          strokeWidth="4"
+          stroke={colors.alertLightRed}
+          strokeWidth="5"
           fill="none"
-          opacity="0.6"
+          opacity="0.85"
         />
 
         {/* tick marks and numbers */}
         {generateTickMarks()}
 
-        {/* needle */}
-        <AnimatedG
-          originX={CENTER_X}
-          originY={CENTER_Y}
-          transform={[
-            {
-              rotate: needleRotation.interpolate({
-                inputRange: [-120, 120],
-                outputRange: ["-120deg", "120deg"],
-              }),
-            },
-          ]}>
-          {/* needle base */}
-          <Circle
-            cx={CENTER_X}
-            cy={CENTER_Y}
-            r="8"
-            fill="url(#needleGradient)"
-            stroke="#fff"
-            strokeWidth="2"
-          />
-        </AnimatedG>
-
         {/* center display */}
-        <Circle
-          cx={CENTER_X}
-          cy={CENTER_Y}
-          r="35"
-          fill="#000"
-          stroke="#333"
-          strokeWidth="1"
-        />
+        <Circle cx={CENTER_X} cy={CENTER_Y} r="52" fill={colors.bgPrimary} />
       </Svg>
 
       {/* digital speed display */}
       <View style={styles.digitalDisplay}>
-        <Text
-          style={[
-            styles.speedText,
-            { color: speed > speedLimit ? "#FF4444" : color },
-          ]}>
-          {formatSpeed(displaySpeed)}
-        </Text>
+        <Text style={styles.speedText}>{formatSpeed(displaySpeed)}</Text>
         <Text style={styles.unitText}>MPH</Text>
       </View>
 
@@ -265,26 +186,33 @@ const styles = StyleSheet.create({
 
   digitalDisplay: {
     position: "absolute",
+    width: 104,
+    height: 104,
+    marginLeft: 0,
+    marginTop: -10,
     alignItems: "center",
     justifyContent: "center",
   },
 
   speedText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: typography.fontHeading,
+    fontSize: 32,
+    color: colors.titleBlue,
     textAlign: "center",
   },
 
   unitText: {
-    fontSize: 10,
-    color: "#888",
-    marginTop: -5,
+    fontFamily: typography.fontUI,
+    fontSize: 12,
+    color: colors.textMuted,
+    marginTop: -2,
   },
 
   label: {
-    fontSize: 12,
-    color: "#888",
-    fontWeight: "bold",
-    marginTop: 10,
+    fontFamily: typography.fontHeading,
+    fontSize: 22,
+    letterSpacing: 2,
+    color: colors.titleBlue,
+    marginTop: 28,
   },
 });

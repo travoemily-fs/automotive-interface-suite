@@ -26,7 +26,14 @@ no batmobile would be complete without an intricate alert system to tell batman 
 
 installation guide
 
-## design credits
+## technical credits
 [using SVGs with expo](https://docs.expo.dev/guides/using-svg/)
 [svg declarations in typescript](https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html)
 [react native metro bundler](https://facebook.github.io/metro/docs/configuration)
+[svg coordinate systems](https://developer.mozilla.org/en-US/docs/Web/SVG)
+[trig in computer graphics](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes#angles)
+[gauge layouts & displays](https://developers.google.com/chart/interactive/docs/gallery/gauge)
+[needle motion & animation effects](https://reactnative.dev/docs/animated)
+[svg rendering & transforms w/ react-native-svg](https://github.com/software-mansion/react-native-svg)
+[animated svg limitations with react-native](https://reactnative.dev/docs/animated#limitations)
+[automotive hmi gauge layout principles](https://developer.apple.com/design/human-interface-guidelines/automotive/overview/)
