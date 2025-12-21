@@ -10,6 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { BrakeButtonProps } from "../types";
+import { colors, typography, spacing, radius } from "../theme/mobileTheme";
 
 export default function BrakeButton({
   onBrake,
@@ -19,6 +20,7 @@ export default function BrakeButton({
   const [brakeValue, setBrakeValue] = useState(0);
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const pressTimer = useRef<NodeJS.Timeout | null>(null);
+
   const startBraking = () => {
     if (disabled) return;
 
@@ -26,7 +28,7 @@ export default function BrakeButton({
 
     // animates button press
     Animated.timing(scaleAnim, {
-      toValue: 0.9,
+      toValue: 0.92,
       duration: 100,
       useNativeDriver: true,
     }).start();
@@ -67,10 +69,9 @@ export default function BrakeButton({
     setBrakeValue(0);
     onBrake("brake", 0);
   };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>BRAKE</Text>
-
       <Animated.View style={[{ transform: [{ scale: scaleAnim }] }]}>
         <Pressable
           style={[
@@ -95,8 +96,6 @@ export default function BrakeButton({
           )}
         </Pressable>
       </Animated.View>
-
-      <Text style={styles.instruction}>Hold to decelerate</Text>
     </View>
   );
 }
@@ -105,75 +104,72 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
+    marginRight: 20,
   },
 
   label: {
-    color: "#888",
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 10,
+    color: colors.titleBlue,
+    fontSize: 18,
+    fontFamily: typography.fontHeading,
+    letterSpacing: 1,
+    marginBottom: spacing.sm,
   },
 
   brakeButton: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#333",
-    borderWidth: 3,
-    borderColor: "#FF4444",
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: "#40010d39",
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#FF4444",
+    shadowColor: colors.glowDanger,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
   },
 
   brakeButtonPressed: {
-    backgroundColor: "#FF4444",
-    borderColor: "#FF6666",
-    shadowOpacity: 0.6,
-    shadowRadius: 10,
+    backgroundColor: "#40010d90",
+    borderColor: colors.borderSubtle,
+    shadowOpacity: 0.7,
+    shadowRadius: 16,
   },
 
   brakeButtonDisabled: {
-    backgroundColor: "#222",
-    borderColor: "#444",
+    backgroundColor: colors.bgPanel,
+    borderColor: colors.borderSubtle,
     shadowOpacity: 0,
   },
 
   brakeText: {
-    color: "#FF4444",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: colors.textPrimary,
+    fontSize: 20,
+    fontFamily: typography.fontHeading,
+    letterSpacing: 1,
   },
 
   brakeTextPressed: {
-    color: "#fff",
+    color: colors.textPrimary,
   },
 
   forceIndicator: {
     position: "absolute",
-    right: -15,
-    top: 10,
+    right: -14,
+    top: 12,
     width: 4,
-    height: 80,
-    backgroundColor: "#333",
-    borderRadius: 2,
+    height: 86,
+    backgroundColor: colors.bgPrimary,
+    borderRadius: radius.sm,
   },
 
   forceBar: {
     position: "absolute",
     bottom: 0,
     width: "100%",
-    backgroundColor: "#FF4444",
-    borderRadius: 2,
-  },
-
-  instruction: {
-    color: "#666",
-    fontSize: 10,
-    marginTop: 10,
+    backgroundColor: colors.alertCritical,
+    borderRadius: radius.sm,
   },
 });

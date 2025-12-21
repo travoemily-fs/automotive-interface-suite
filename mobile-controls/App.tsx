@@ -1,8 +1,16 @@
 // import needed dependencies
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
+import {
+  colors,
+  typography,
+  spacing,
+  radius,
+} from "../mobile-controls/src/theme/mobileTheme";
 import { useVehicleConnection } from "src/hooks/useVehicleConnection";
 import SteeringSlider from "./src/components/SteeringSlider";
 import GasPedal from "./src/components/GasPedal";
@@ -12,8 +20,25 @@ import Controls from "./src/components/Controls";
 const { width, height } = Dimensions.get("window");
 
 export default function App() {
-  const { connected, BatmobileState: batmobileState, sendControlCommand } =
-    useVehicleConnection();
+  const [fontsLoaded] = useFonts({
+    NexaLight: require("./assets/fonts/Nexa-ExtraLight.ttf"),
+    NexaHeavy: require("./assets/fonts/Nexa-Heavy.ttf"),
+    Tsing: require("./assets/fonts/Tsing.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
+  return <AppContent />;
+}
+
+function AppContent() {
+  const {
+    connected,
+    BatmobileState: batmobileState,
+    sendControlCommand,
+  } = useVehicleConnection();
 
   useEffect(() => {
     // locks screen orientation to landscape
@@ -22,7 +47,6 @@ export default function App() {
         await ScreenOrientation.lockAsync(
           ScreenOrientation.OrientationLock.LANDSCAPE,
         );
-        console.log("orientation locked to landscape");
       } catch (error) {
         console.log("failed to lock orientation", error);
       }
@@ -61,7 +85,7 @@ export default function App() {
             style={[
               styles.statusDot,
               {
-                backgroundColor: connected ? "#4CAF50" : "#F44336",
+                backgroundColor: connected ? "#7389a5" : "#5d0617",
               },
             ]}
           />
@@ -89,6 +113,7 @@ export default function App() {
 
         {/* center - batmobile info & controls */}
         <View style={styles.centerInfo}>
+          {/* GEAR BOX  */}
           <View style={styles.gearDisplay}>
             <Text style={styles.gearLabel}>GEAR</Text>
             <Text style={styles.gearValue}>
@@ -118,24 +143,27 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: "#0d0305",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
     paddingVertical: 10,
-    backgroundColor: "#2a2a2a",
-    borderBottomWidth: 2,
-    borderBottomColor: "#444",
+    backgroundColor: "#40010d25",
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(149, 160, 178, 0.15)",
   },
 
   connectionStatus: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
+    paddingRight:5
   },
 
   statusDot: {
@@ -146,14 +174,16 @@ const styles = StyleSheet.create({
   },
 
   connectionText: {
-    color: "#fff",
-    fontSize: 12,
+    color: "#c1c3c7",
+    fontSize: 11,
+    textTransform: "uppercase"
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#7389a5",
+    fontFamily: typography.fontHeading,
     flex: 2,
     textAlign: "center",
   },
@@ -164,14 +194,15 @@ const styles = StyleSheet.create({
   },
 
   speedText: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
-    color: "#00FF88",
+    color: "#923434",
+    fontFamily: typography.fontHeading,
   },
 
   speedUnit: {
     fontSize: 10,
-    color: "#888",
+    color: "#c1c3c7",
   },
 
   controlArea: {
@@ -197,26 +228,27 @@ const styles = StyleSheet.create({
 
   gearDisplay: {
     alignItems: "center",
-    backgroundColor: "#2a2a2a",
+    backgroundColor: "#34445947",
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
-    borderWidth: 2,
-    borderColor: "#444",
+    borderWidth: 1,
+    borderColor: "rgba(149, 160, 178, 0.15)",
     minWidth: 80,
   },
 
   gearLabel: {
-    color: "#888",
-    fontSize: 12,
-    fontWeight: "bold",
+    color: "#c1c3c7",
+    fontSize: 15,
+    fontFamily: typography.fontHeading,
   },
 
   gearValue: {
-    color: "#00FF88",
-    fontSize: 28,
+    color: "#923434",
+    fontSize: 35,
     fontWeight: "bold",
-    marginTop: 5,
+    marginTop: 8,
+    fontFamily: typography.fontHeading,
   },
 
   rightControls: {

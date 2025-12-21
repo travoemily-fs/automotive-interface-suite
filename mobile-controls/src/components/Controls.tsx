@@ -2,6 +2,8 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { ControlsProps } from "../types";
+import { colors, typography, spacing, radius } from "../theme/mobileTheme";
+import Icon from "./Icon";
 
 const GEARS = ["P", "R", "N", "D", "S"] as const;
 type Gear = (typeof GEARS)[number];
@@ -24,119 +26,113 @@ export default function Controls({
     <View style={styles.container}>
       {/* gear selector */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>GEAR</Text>
+        <Text style={styles.sectionTitle}>Tactical Gear State</Text>
+
         <View style={styles.gearSelector}>
-          {GEARS.map((gear) => (
-            <Pressable
-              key={gear}
-              style={[
-                styles.gearButton,
-                currentGear === gear && styles.gearButtonActive,
-              ]}
-              onPress={() => handleGearChange(gear)}>
-              <Text
-                style={[
-                  styles.gearText,
-                  currentGear === gear && styles.gearTextActive,
-                ]}>
-                {gear}
-              </Text>
-            </Pressable>
-          ))}
+          {GEARS.map((gear) => {
+            const isActive = currentGear === gear;
+
+            return (
+              <Pressable
+                key={gear}
+                style={[styles.gearButton, isActive && styles.gearButtonActive]}
+                onPress={() => handleGearChange(gear)}>
+                <Text
+                  style={[styles.gearText, isActive && styles.gearTextActive]}>
+                  {gear}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
 
-        {/* gear descriptions */}
         <Text style={styles.gearDescription}>
-          {getGearDescription(currentGear)}
+          {getGearDescription(currentGear as Gear)}
         </Text>
       </View>
 
       {/* lighting controls */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>LIGHTS</Text>
+        <Text style={styles.sectionTitle}>Toggle Optics</Text>
 
         <View style={styles.controlRow}>
-          <Pressable
-            style={[
-              styles.systemButton,
-              systems?.lights && styles.systemButtonActive,
-            ]}
-            onPress={() => handleSystemToggle("lights")}>
-            <Text
-              style={[
-                styles.systemText,
-                systems?.lights && styles.systemTextActive,
-              ]}>
-              💡 LIGHTS
-            </Text>
-          </Pressable>
+          <SystemButton
+            label="LIGHTS"
+            active={!!systems?.lights}
+            onPress={() => handleSystemToggle("lights")}
+            icon="light"
+          />
 
-          <Pressable
-            style={[
-              styles.systemButton,
-              systems?.hazards && styles.systemButtonActive,
-            ]}
-            onPress={() => handleSystemToggle("hazards")}>
-            <Text
-              style={[
-                styles.systemText,
-                systems?.hazards && styles.systemTextActive,
-              ]}>
-              ⚠️ HAZARD
-            </Text>
-          </Pressable>
+          <SystemButton
+            label="HAZARD"
+            active={!!systems?.hazards}
+            onPress={() => handleSystemToggle("hazards")}
+            icon="warning"
+          />
         </View>
 
         <View style={styles.controlRow}>
-          <Pressable
-            style={[
-              styles.systemButton,
-              systems?.leftSignal && styles.systemButtonActive,
-            ]}
-            onPress={() => handleSystemToggle("leftSignal")}>
-            <Text
-              style={[
-                styles.systemText,
-                systems?.leftSignal && styles.systemTextActive,
-              ]}>
-              ⬅️ LEFT
-            </Text>
-          </Pressable>
+          <SystemButton
+            label="LEFT"
+            active={!!systems?.leftSignal}
+            onPress={() => handleSystemToggle("leftSignal")}
+            icon="left"
+          />
 
-          <Pressable
-            style={[
-              styles.systemButton,
-              systems?.rightSignal && styles.systemButtonActive,
-            ]}
-            onPress={() => handleSystemToggle("rightSignal")}>
-            <Text
-              style={[
-                styles.systemText,
-                systems?.rightSignal && styles.systemTextActive,
-              ]}>
-              ➡️ RIGHT
-            </Text>
-          </Pressable>
+          <SystemButton
+            label="RIGHT"
+            active={!!systems?.rightSignal}
+            onPress={() => handleSystemToggle("rightSignal")}
+            icon="right"
+          />
         </View>
       </View>
     </View>
   );
 }
 
-function getGearDescription(gear: string): string {
+function SystemButton({
+  label,
+  active,
+  onPress,
+  icon,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  icon: "light" | "warning" | "left" | "right";
+}) {
+  const iconColor = active ? colors.textPrimary : colors.textMuted;
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[styles.systemButton, active && styles.systemButtonActive]}>
+      <View style={styles.systemContent}>
+        <Icon name={icon} size={12} color={iconColor} />
+
+        <Text style={[styles.systemText, active && styles.systemTextActive]}>
+          {label}
+        </Text>
+      </View>
+    </Pressable>
+  );
+}
+
+function getGearDescription(gear: Gear): string {
   switch (gear) {
     case "P":
-      return "Park - Vehicle locked";
+      return "VEHICLE IN PARK";
     case "R":
-      return "Reverse - Backing up";
+      return "VEHICLE IN REVERSE";
     case "N":
-      return "Neutral - No drive";
+      return "VEHICLE IN NEUTRAL";
     case "D":
-      return "Drive - Normal forward";
+      return "VEHICLE IN DRIVE";
     case "S":
-      return "Sport - Performance mode";
+      return "VEHICLE IN PERFORMANCE MODE";
     default:
-      return "Unknown gear";
+      return "UNKNOWN GEAR";
   }
 }
 
@@ -144,26 +140,37 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    gap: 20,
+    gap: spacing.lg,
+    backgroundColor: colors.bgPrimary,
+    padding: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 10,
+    borderColor: colors.borderSubtle,
   },
 
   section: {
     alignItems: "center",
-    gap: 10,
+    gap: spacing.sm,
   },
 
   sectionTitle: {
-    color: "#888",
-    fontSize: 12,
-    fontWeight: "bold",
+    color: colors.textPrimary,
+    textAlign:"center",
+    fontSize: 20,
+    paddingTop: 5,
+    fontFamily: typography.fontHeading,
+    letterSpacing: 1,
   },
 
   gearSelector: {
     flexDirection: "row",
-    backgroundColor: "#2a2a2a",
-    borderRadius: 25,
-    padding: 4,
-    gap: 2,
+    backgroundColor: colors.bgPrimary,
+    borderRadius: 999,
+    padding: spacing.xs,
+    gap: spacing.xs,
   },
 
   gearButton: {
@@ -172,55 +179,73 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "transparent",
   },
 
   gearButtonActive: {
-    backgroundColor: "#00FF88",
+    backgroundColor: "#40010d94",
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
   },
 
   gearText: {
-    color: "#888",
-    fontSize: 16,
+    color: colors.titleBlue,
+    fontSize: 25,
+    fontFamily: typography.fontHeading,
     fontWeight: "bold",
   },
 
   gearTextActive: {
-    color: "#000",
+    color: colors.textPrimary,
   },
 
   gearDescription: {
-    color: "#666",
-    fontSize: 10,
+    color: colors.textPrimary,
+    fontSize: typography.sizes.micro,
     textAlign: "center",
+    backgroundColor: "#3444595c",
+    padding: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
   },
 
   controlRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm,
   },
 
   systemButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: "#2a2a2a",
+    minWidth: 110,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    backgroundColor: "#40010d5d",
     borderWidth: 1,
-    borderColor: "#444",
+    borderColor: colors.borderSubtle,
   },
 
   systemButtonActive: {
-    backgroundColor: "#FFD700",
-    borderColor: "#FFD700",
+    backgroundColor: colors.alertCritical,
+    borderColor: colors.borderSubtle,
+  },
+
+  systemContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.xs,
   },
 
   systemText: {
-    color: "#888",
-    fontSize: 12,
+    color: colors.textPrimary,
+    fontSize: typography.sizes.small,
     fontWeight: "bold",
+    fontFamily: typography.fontUIBold,
   },
 
   systemTextActive: {
-    color: "#000",
+    color: colors.textPrimary,
   },
 });
