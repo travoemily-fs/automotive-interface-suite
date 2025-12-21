@@ -38,7 +38,7 @@ body,
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
   min-height: 100vh;
-  width:100vw;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   font-family: var(--font-ui);
@@ -46,20 +46,30 @@ body,
 
 .app-header {
   background: var(--color-bg-primary);
-  padding: 20px;
+  padding: 20px 32px;
   border-bottom: 1px solid var(--color-text-accent);
   box-shadow:
     #40010d45 0px 24px 40px -14px inset,
     rgba(13, 3, 5, 0.5) 0px 16px 22px -16px inset;
+  display: flex;
+  align-items: center;
+  gap: 18px; /* space between logo + text */
+}
+
+.bat-logo {
+  width: 200px;
+  height: auto;
+  display: block;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 14px rgba(0, 0, 0, 0.7));
 }
 
 .app-header h1 {
   margin: 0;
-  color: var(--color-title-blue);
+  color: #923434;
   font-size: 45px;
   font-weight: 700;
-  text-shadow:
-    0 0 5px #7389a550;
+  text-shadow: 0 0 5px #92343468;
   font-family: var(--font-heading);
 }
 
@@ -112,10 +122,10 @@ body,
 }
 
 .globeIcon {
-  font-size:15px;
-  vertical-align:text-bottom;
-  padding-right:10px;
-  padding-left:5px;
+  font-size: 15px;
+  vertical-align: text-bottom;
+  padding-right: 10px;
+  padding-left: 5px;
   color: var(--color-accent-light-red);
 }
 

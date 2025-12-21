@@ -328,27 +328,12 @@
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border-bottom: 1px solid #1a1a1a;
-  border-left: 4px solid;
+
 }
 
-/* severity-driven state */
-.alert-item.severity-low {
-  border-left-color: var(--color-title-blue);
-}
-
-.alert-item.severity-medium {
-  border-left-color: var(--color-accent-light-red);
-}
-
-.alert-item.severity-high {
-  border-left-color: var(--color-alert-critical);
-  background: #40010d20;
-}
 
 /* bat-signal / critical system event */
 .alert-item.batsignal {
-  border-left-color: var(--color-alert-critical);
   background: linear-gradient(90deg, #40010d40, transparent);
   box-shadow: 0 0 12px #40010d80;
 }
@@ -357,6 +342,7 @@
 .alert-icon {
   font-size: 16px;
   opacity: 0.85;
+  vertical-align:middle;
   color: var(--color-text-primary);
 }
 
@@ -370,7 +356,7 @@
 /* timestamp / state info */
 .alert-time {
   font-size: 10px;
-  color: #888;
+  color: var(--color-text-primary);
   text-align: right;
   white-space: nowrap;
 }
@@ -379,7 +365,7 @@
 .no-alerts {
   padding: 20px;
   text-align: center;
-  color: #666;
+  color: var(--color-text-primary);
   font-style: italic;
   letter-spacing: 0.5px;
 }
@@ -392,11 +378,11 @@
   background: #1a1a1a;
 }
 .active-alerts::-webkit-scrollbar-thumb {
-  background: #444;
+  background:  #5d0617;
   border-radius: 3px;
 }
 .active-alerts::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background:  #5d0617;
 }
 
 /* responsive design */

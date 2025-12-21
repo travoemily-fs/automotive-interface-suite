@@ -166,6 +166,27 @@ io.on("connection", (socket) => {
     );
 
     emitConnectionStats();
+
+    // sets up demo bat-signal firing timer
+    if (clientType === "web" && !demoBatSignalFired) {
+      demoBatSignalFired = true;
+
+      setTimeout(() => {
+        const baseEvent =
+          DEMO_BAT_SIGNAL_EVENTS[
+            Math.floor(Math.random() * DEMO_BAT_SIGNAL_EVENTS.length)
+          ];
+
+        const demoBatSignal: BatSignalAlert = {
+          ...baseEvent,
+          id: `bat-signal-demo-${Date.now()}`,
+          timestamp: new Date().toISOString(),
+        };
+
+        console.log(`bat-signal fired: ${demoBatSignal.reason}`);
+        io.emit("bat-signal", demoBatSignal);
+      }, 30_000); // bat-signal delay
+    }
   });
 
   // handles client disconnects
@@ -176,6 +197,12 @@ io.on("connection", (socket) => {
       connectedClients[type]--;
       emitConnectionStats();
     }
+  });
+
+  // resets bat-signal after acknowledge
+  socket.on("acknowledge-bat-signal", () => {
+    batSignalActive = false;
+    console.log("bat-signal acknowledged — system reset");
   });
 
   // handles control inputs from mobile app with type safety
@@ -236,93 +263,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// physics simulation that runs at 20 fps
-setInterval(() => {
-  updateVehiclePhysics();
-
-  const escalatedCrime = evaluateCrimeEscalation();
-
-  if (escalatedCrime && !batSignalActive) {
-    batSignalActive = true;
-
-    const batSignal = triggerBatSignal(escalatedCrime);
-
-    console.log("bat-signal activated:", batSignal.reason);
-    io.emit("bat-signal", batSignal);
-  }
-
-  io.emit("vehicle-update", batmobileState);
-}, 50);
-
-function updateVehiclePhysics(): void {
-  const { controls, motion } = batmobileState;
-
-  if (controls.brake > 0) {
-    motion.speed -= Math.sign(motion.speed || 1) * controls.brake;
-    motion.accelerating = false;
-  } else if (controls.throttle > 0) {
-    if (controls.gear === "D") {
-      motion.speed += controls.throttle * 0.5;
-    } else if (controls.gear === "R") {
-      motion.speed -= controls.throttle * 0.5;
-    }
-    motion.accelerating = true;
-  } else {
-    motion.speed *= 0.98;
-    motion.accelerating = false;
-  }
-
-  motion.speed = Math.max(-60, Math.min(120, motion.speed));
-
-  if (controls.gear === "D" || controls.gear === "R") {
-    batmobileState.cockpit.rpm = Math.min(
-      6000,
-      motion.speed * 50 + controls.throttle * 1000,
-    );
-  } else {
-    batmobileState.cockpit.rpm *= 0.95;
-  }
-}
-
-// evaluates whether crime activity has escalated to a citywide threat
-function evaluateCrimeEscalation(): CrimeEvent | null {
-  const arkhamEscape = activeCrimes.find(
-    (crime) => crime.category === "arkham escape" && crime.level === "citywide",
-  );
-
-  if (arkhamEscape) {
-    return arkhamEscape;
-  }
-
-  const majorCrimes = activeCrimes.filter((crime) => crime.level === "major");
-
-  if (majorCrimes.length >= 2) {
-    return {
-      id: `crime-${Date.now()}`,
-      level: "citywide",
-      category: "organized-crime",
-      description: "multiple major crime events escalating across gotham",
-      location: majorCrimes[0].location,
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  return null;
-}
-
-// converts a citywide crime event into a bat-signal alert
-function triggerBatSignal(crime: CrimeEvent): BatSignalAlert {
-  return {
-    id: `bat-signal-${Date.now()}`,
-    severity: "critical",
-    reason: crime.category,
-    message: `critical: ${crime.description}`,
-    vehicleId: "batmobile-01",
-    location: crime.location,
-    timestamp: new Date().toISOString(),
-  };
-}
-
 // starting the server
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
@@ -331,24 +271,3 @@ server.listen(PORT, () => {
   );
   console.log("Awaiting connections.");
 });
-
-// one-shot demo bat-signal trigger (fires once after 1.5 minutes)
-setTimeout(() => {
-  if (demoBatSignalFired) return;
-  demoBatSignalFired = true;
-
-  const baseEvent =
-    DEMO_BAT_SIGNAL_EVENTS[
-      Math.floor(Math.random() * DEMO_BAT_SIGNAL_EVENTS.length)
-    ];
-
-  const demoBatSignal: BatSignalAlert = {
-    ...baseEvent,
-    id: `bat-signal-demo-${Date.now()}`,
-    timestamp: new Date().toISOString(),
-  };
-
-  console.log(`bat-signal fired: ${demoBatSignal.reason}`);
-
-  io.emit("bat-signal", demoBatSignal);
-}, 90_000);

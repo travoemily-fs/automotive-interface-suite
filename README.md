@@ -16,7 +16,7 @@ no batmobile would be complete without an intricate alert system to tell batman 
 
 **core functionality:** built from the pre-existing traffic alert structure, the bat-signal works off of alert severity. when severity hits critical levels, the bat-signal alert fires across the dashboard.
 
-**important notice for demo purposes:** a randomized bat-signal is set to fire within **one minute and thirty seconds** of web dashboard start-up.
+**important notice for demo purposes:** a randomized bat-signal is set to fire within **thirty seconds** of web dashboard start-up.
 
 ## architecture overview
 

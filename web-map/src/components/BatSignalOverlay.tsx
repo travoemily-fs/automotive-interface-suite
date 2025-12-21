@@ -3,6 +3,7 @@ import React from "react";
 import "./BatSignalOverlay.css";
 import { BatSignalAlert } from "../../../shared-types";
 import { CiGps, CiSquareAlert, CiWarning } from "react-icons/ci";
+import BatLogo from "../assets/batlogo2.svg";
 
 interface BatSignalOverlayProps {
   alert: BatSignalAlert;
@@ -20,7 +21,10 @@ export default function BatSignalOverlay({
   return (
     <div className="bat-signal-overlay" onClick={handleAcknowledge}>
       <div className="bat-signal-panel" onClick={(e) => e.stopPropagation()}>
-        <div className="bat-signal-header">BAT-SIGNAL ACTIVATED</div>
+        <div className="bat-signal-header">
+          <img src={BatLogo} alt="Bat Signal" className="bat-signal-logo" />
+          <span>BAT-SIGNAL ACTIVATED</span>
+        </div>
 
         <div className="bat-signal-body">
           <div>

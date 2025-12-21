@@ -208,6 +208,10 @@ export function useTrafficControl() {
     [updateEnvironment],
   );
 
+  const clearBatSignal = useCallback(() => {
+    setBatSignal(null);
+  }, []);
+
   return {
     connected,
     vehicles: Object.values(vehicles),
@@ -218,5 +222,6 @@ export function useTrafficControl() {
     createAlert,
     updateSpeedLimit,
     batSignal,
+    clearBatSignal,
   };
 }
